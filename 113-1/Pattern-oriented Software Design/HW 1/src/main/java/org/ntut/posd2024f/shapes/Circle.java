@@ -22,6 +22,6 @@ public class Circle implements Shape {
 
     @Override
     public String toString() {
-        return String.format("Circle[ with radius: ]%.1f", this.radius);
+        return "Circle " + this.radius;
     }
 }

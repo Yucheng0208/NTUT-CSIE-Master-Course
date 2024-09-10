@@ -25,6 +25,6 @@ public class Triangle implements Shape {
 
     @Override
     public String toString() {
-        return "Triangle with sides: " + a + ", " + b + ", " + c;
+        return "Triangle " + this.a + " " + this.b + " " + this.c;
     }
 }

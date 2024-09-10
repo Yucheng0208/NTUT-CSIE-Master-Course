@@ -24,6 +24,7 @@ public class Rectangle implements Shape {
 
     @Override
     public String toString() {
-        return "Rectangle with length: " + this.length + ", width: " + this.width;
+        return "Rectangle " + this.length + " " + this.width;
     }
+    
 }

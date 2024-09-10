@@ -30,6 +30,6 @@ public class TriangleTest {
     @Test
     public void testTriangleToString() throws Exception {
         Triangle triangle = new Triangle(3, 4, 5);
-        assertEquals("Triangle with sides: 3.0, 4.0, 5.0", triangle.toString());
+        assertEquals("Triangle 3.0 4.0 5.0", triangle.toString());
     }
 }

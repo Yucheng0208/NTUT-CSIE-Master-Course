@@ -16,9 +16,14 @@ public class SortTest {
         
         Collections.sort(shapes, Sort.BY_AREA_ASCENDING);
 
-        // 應按面積升序排序，第一個應是面積 6 的形狀，最後一個是面積 12.5664
-        assertEquals(6.0, shapes.get(0).area(), 0.0001); // Triangle with area 6
-        assertEquals(6.0, shapes.get(1).area(), 0.0001); // Rectangle with area 6
+        // 按面積升序排序，面積相同時按名稱排序，Rectangle 應排在 Triangle 之前
+        assertEquals("Rectangle", shapes.get(0).getClass().getSimpleName());
+        assertEquals(6.0, shapes.get(0).area(), 0.0001); // Rectangle with area 6
+
+        assertEquals("Triangle", shapes.get(1).getClass().getSimpleName());
+        assertEquals(6.0, shapes.get(1).area(), 0.0001); // Triangle with area 6
+
+        assertEquals("Circle", shapes.get(2).getClass().getSimpleName());
         assertEquals(12.5664, shapes.get(2).area(), 0.0001); // Circle with area 12.5664
     }
 
@@ -31,9 +36,14 @@ public class SortTest {
 
         Collections.sort(shapes, Sort.BY_PERIMETER_DESCENDING);
 
-        // 應按周長降序排序，第一個應是周長 12.5664 的形狀
+        // 按周長降序排序，當周長相同時按名稱排序，Circle 應排在 Triangle 之前
+        assertEquals("Circle", shapes.get(0).getClass().getSimpleName());
         assertEquals(12.5664, shapes.get(0).perimeter(), 0.0001); // Circle with perimeter 12.5664
+
+        assertEquals("Triangle", shapes.get(1).getClass().getSimpleName());
         assertEquals(12.0, shapes.get(1).perimeter(), 0.0001); // Triangle with perimeter 12
+
+        assertEquals("Rectangle", shapes.get(2).getClass().getSimpleName());
         assertEquals(10.0, shapes.get(2).perimeter(), 0.0001); // Rectangle with perimeter 10
     }
 }
