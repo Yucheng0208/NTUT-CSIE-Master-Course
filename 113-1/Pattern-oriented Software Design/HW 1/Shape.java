@@ -1,9 +1,7 @@
 /*
 Project Name: Homework 1
 File Name: Shape.java
-Author: Yu-Cheng Chang 張育丞
-Student ID: 113598043
-Datetime: 2024/09/09 10:50pm
+Datetime: 2024/09/09 11:18pm
 */
 
 public abstract class Shape{
