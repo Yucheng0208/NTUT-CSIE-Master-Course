@@ -28,6 +28,6 @@ public class CircleTest {
     @Test
     public void testCircleToString() throws Exception {
         Circle circle = new Circle(5);
-        assertEquals("Circle with radius: 5.0", circle.toString());
+        assertEquals("Circle[ with radius: ]5.0", circle.toString());
     }
 }
