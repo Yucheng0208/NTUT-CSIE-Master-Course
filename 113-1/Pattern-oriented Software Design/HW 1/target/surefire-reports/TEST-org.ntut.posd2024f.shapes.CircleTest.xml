@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.ntut.posd2024f.shapes.CircleTest" time="0.03" tests="4" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.ntut.posd2024f.shapes.CircleTest" time="0.036" tests="4" errors="0" skipped="0" failures="0">
   <properties>
     <property name="sun.desktop" value="windows"/>
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
@@ -7,7 +7,7 @@
     <property name="java.specification.version" value="1.8"/>
     <property name="sun.cpu.isalist" value="amd64"/>
     <property name="sun.jnu.encoding" value="MS950"/>
-    <property name="java.class.path" value="D:\Course\posd2024f_113598043_hw\target\test-classes;D:\Course\posd2024f_113598043_hw\target\classes;C:\Users\lab1323\.m2\repository\junit\junit\4.12\junit-4.12.jar;C:\Users\lab1323\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
+    <property name="java.class.path" value="C:\Users\lab1323\Documents\posd2024f_ta-assignment1_template_code\target\test-classes;C:\Users\lab1323\Documents\posd2024f_ta-assignment1_template_code\target\classes;C:\Users\lab1323\.m2\repository\junit\junit\4.12\junit-4.12.jar;C:\Users\lab1323\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
     <property name="java.vm.vendor" value="Temurin"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="user.variant" value=""/>
@@ -18,20 +18,20 @@
     <property name="user.country" value="TW"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Eclipse Adoptium\jdk-8.0.422.5-hotspot\jre\bin"/>
-    <property name="sun.java.command" value="C:\Users\lab1323\AppData\Local\Temp\surefire2707166036767540078\surefirebooter-20240910165006908_3.jar C:\Users\lab1323\AppData\Local\Temp\surefire2707166036767540078 2024-09-10T16-50-06_790-jvmRun1 surefire-20240910165006908_1tmp surefire_0-20240910165006908_2tmp"/>
-    <property name="surefire.test.class.path" value="D:\Course\posd2024f_113598043_hw\target\test-classes;D:\Course\posd2024f_113598043_hw\target\classes;C:\Users\lab1323\.m2\repository\junit\junit\4.12\junit-4.12.jar;C:\Users\lab1323\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
+    <property name="sun.java.command" value="C:\Users\lab1323\AppData\Local\Temp\surefire8501437906708310782\surefirebooter-20240911142050464_3.jar C:\Users\lab1323\AppData\Local\Temp\surefire8501437906708310782 2024-09-11T14-20-50_345-jvmRun1 surefire-20240911142050464_1tmp surefire_0-20240911142050464_2tmp"/>
+    <property name="surefire.test.class.path" value="C:\Users\lab1323\Documents\posd2024f_ta-assignment1_template_code\target\test-classes;C:\Users\lab1323\Documents\posd2024f_ta-assignment1_template_code\target\classes;C:\Users\lab1323\.m2\repository\junit\junit\4.12\junit-4.12.jar;C:\Users\lab1323\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="C:\Users\lab1323"/>
     <property name="user.language" value="zh"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="java.home" value="C:\Program Files\Eclipse Adoptium\jdk-8.0.422.5-hotspot\jre"/>
-    <property name="basedir" value="D:\Course\posd2024f_113598043_hw"/>
+    <property name="basedir" value="C:\Users\lab1323\Documents\posd2024f_ta-assignment1_template_code"/>
     <property name="file.separator" value="\"/>
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
-    <property name="surefire.real.class.path" value="C:\Users\lab1323\AppData\Local\Temp\surefire2707166036767540078\surefirebooter-20240910165006908_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\lab1323\AppData\Local\Temp\surefire8501437906708310782\surefirebooter-20240911142050464_3.jar"/>
     <property name="sun.boot.class.path" value="C:\Program Files\Eclipse Adoptium\jdk-8.0.422.5-hotspot\jre\lib\resources.jar;C:\Program Files\Eclipse Adoptium\jdk-8.0.422.5-hotspot\jre\lib\rt.jar;C:\Program Files\Eclipse Adoptium\jdk-8.0.422.5-hotspot\jre\lib\sunrsasign.jar;C:\Program Files\Eclipse Adoptium\jdk-8.0.422.5-hotspot\jre\lib\jsse.jar;C:\Program Files\Eclipse Adoptium\jdk-8.0.422.5-hotspot\jre\lib\jce.jar;C:\Program Files\Eclipse Adoptium\jdk-8.0.422.5-hotspot\jre\lib\charsets.jar;C:\Program Files\Eclipse Adoptium\jdk-8.0.422.5-hotspot\jre\lib\jfr.jar;C:\Program Files\Eclipse Adoptium\jdk-8.0.422.5-hotspot\jre\classes"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
@@ -47,7 +47,7 @@
     <property name="java.vendor.url.bug" value="https://github.com/adoptium/adoptium-support/issues"/>
     <property name="java.io.tmpdir" value="C:\Users\lab1323\AppData\Local\Temp\"/>
     <property name="java.version" value="1.8.0_422"/>
-    <property name="user.dir" value="D:\Course\posd2024f_113598043_hw"/>
+    <property name="user.dir" value="C:\Users\lab1323\Documents\posd2024f_ta-assignment1_template_code"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
@@ -61,8 +61,8 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="52.0"/>
   </properties>
-  <testcase name="testCircleArea" classname="org.ntut.posd2024f.shapes.CircleTest" time="0.001"/>
+  <testcase name="testCircleArea" classname="org.ntut.posd2024f.shapes.CircleTest" time="0.002"/>
   <testcase name="testCircleToString" classname="org.ntut.posd2024f.shapes.CircleTest" time="0.0"/>
-  <testcase name="testInvalidCircle" classname="org.ntut.posd2024f.shapes.CircleTest" time="0.0"/>
+  <testcase name="testInvalidCircleRadius" classname="org.ntut.posd2024f.shapes.CircleTest" time="0.003"/>
   <testcase name="testCirclePerimeter" classname="org.ntut.posd2024f.shapes.CircleTest" time="0.0"/>
 </testsuite>
