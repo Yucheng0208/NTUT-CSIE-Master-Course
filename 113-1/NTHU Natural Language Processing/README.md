@@ -30,6 +30,9 @@
 **Prerequisite Skills**:  
 (List of prerequisite skills here)
 
+**Course Materials**:  
+[Course Materials on GitHub](https://github.com/IKMLab/NTHU_Natural_Language_Processing)
+
 ---
 
 ## Course Assignments
@@ -91,6 +94,9 @@ The content shared here is for educational and reference purposes. The author of
 **基礎技能**:  
 (填入基礎技能)
 
+**課程教材**:  
+[GitHub 課程教材](https://github.com/IKMLab/NTHU_Natural_Language_Processing)
+
 ---
 
 ## 課程作業
@@ -151,6 +157,9 @@ The content shared here is for educational and reference purposes. The author of
 
 **基础技能**:  
 (填入基础技能)
+
+**课程教材**:  
+[GitHub 课程教材](https://github.com/IKMLab/NTHU_Natural_Language_Processing)
 
 ---
 
