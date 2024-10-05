@@ -57,6 +57,8 @@ This repository is licensed under the [MIT License](LICENSE). You are free to us
 **授權條款**  
 本儲存庫的授權條款為 [MIT License](LICENSE)。您可以自由使用、修改和分發這些資料，前提是必須標註原始作者並應用相同的授權條款。
 
+---
+
 # 简体中文版本
 
 **介绍**  
