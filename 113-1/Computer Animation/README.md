@@ -32,14 +32,15 @@
 
 ---
 
-## Course Assignments
+## Course Homework
 
-| No.   | Assignment No.    | Link to Assignment                                                 | Notes                    |
-|-------|-------------------|--------------------------------------------------------------------|--------------------------|
-| 1     | Assignment 1       | [Link](./Assignment1/)                                             | (Add any relevant notes)  |
-| 2     | Assignment 2       | [Link](./Assignment2/)                                             | (Add any relevant notes)  |
-| 3     | Assignment 3       | [Link](./Assignment3/)                                             | (Add any relevant notes)  |
-| ...   | Assignment X       | [Link](./AssignmentX/)                                             | (Add any relevant notes)  |
+| No.   | Assignment No.    | Link to Assignment                               | Deadline    | Notes                     |
+|-------|-------------------|--------------------------------------------------|-------------|---------------------------|
+| 1     | Assignment 1      | [Link]((https://yucheng0208.github.io/ca2024f/)) | 2024-10-25  | (Add any relevant notes)  |
+| 2     | Assignment 2      | [Link]((https://yucheng0208.github.io/ca2024f/)) | 2024-10-25  | (Add any relevant notes)  |
+| 3     | Assignment 3      | [Link]((https://yucheng0208.github.io/ca2024f/)) | 2024-10-25  | (Add any relevant notes)  |
+| 4     | Assignment 4      | [Link]((https://yucheng0208.github.io/ca2024f/)) | 2024-10-25  | (Add any relevant notes)  |
+| 5     | Assignment 5      | [Link]((https://yucheng0208.github.io/ca2024f/)) | 2024-10-29  | (Add any relevant notes)  |
 
 ---
 
@@ -95,12 +96,12 @@ The content shared here is for educational and reference purposes. The author of
 
 ## 課程作業
 
-| 編號  | 作業名稱           | 作業連結                                                  | 備註                  |
-|-------|--------------------|-----------------------------------------------------------|-----------------------|
-| 1     | Assignment 1        | [連結](./Assignment1/)                                     | (填入相關備註)        |
-| 2     | Assignment 2        | [連結](./Assignment2/)                                     | (填入相關備註)        |
-| 3     | Assignment 3        | [連結](./Assignment3/)                                     | (填入相關備註)        |
-| ...   | Assignment X        | [連結](./AssignmentX/)                                     | (填入相關備註)        |
+| 編號  | 作業名稱        | 作業連結                                                  | 備註                  |
+|-------|----------------|-----------------------------------------------------------|-----------------------|
+| 1     | Assignment 1   | [連結](./Assignment1/)                                     | (填入相關備註)        |
+| 2     | Assignment 2   | [連結](./Assignment2/)                                     | (填入相關備註)        |
+| 3     | Assignment 3   | [連結](./Assignment3/)                                     | (填入相關備註)        |
+| ...   | Assignment X   | [連結](./AssignmentX/)                                     | (填入相關備註)        |
 
 ---
 
