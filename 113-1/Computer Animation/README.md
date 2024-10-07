@@ -12,8 +12,7 @@
 **Course Code**:  
 (Course code here)
 
-**Course Name**:  
-(Course name here)
+**Course Name**:  Computer Animation
 
 **Instructor**:  
 (Instructor's name here)
@@ -34,13 +33,13 @@
 
 ## Course Homework
 
-| No.   | Assignment No.    | Link to Assignment                               | Deadline    | Notes                     |
-|-------|-------------------|--------------------------------------------------|-------------|---------------------------|
-| 1     | Assignment 1      | [Link]((https://yucheng0208.github.io/ca2024f/)) | 2024-10-25  | (Add any relevant notes)  |
-| 2     | Assignment 2      | [Link]((https://yucheng0208.github.io/ca2024f/)) | 2024-10-25  | (Add any relevant notes)  |
-| 3     | Assignment 3      | [Link]((https://yucheng0208.github.io/ca2024f/)) | 2024-10-25  | (Add any relevant notes)  |
-| 4     | Assignment 4      | [Link]((https://yucheng0208.github.io/ca2024f/)) | 2024-10-25  | (Add any relevant notes)  |
-| 5     | Assignment 5      | [Link]((https://yucheng0208.github.io/ca2024f/)) | 2024-10-29  | (Add any relevant notes)  |
+| No.   | Assignment No.    | Link to Assignment                             | Deadline    | Notes                     |
+|-------|-------------------|------------------------------------------------|-------------|---------------------------|
+| 1     | Assignment 1      | [Link](https://yucheng0208.github.io/ca2024f/) | 2024-10-25  | (Add any relevant notes)  |
+| 2     | Assignment 2      | [Link](https://yucheng0208.github.io/ca2024f/) | 2024-10-25  | (Add any relevant notes)  |
+| 3     | Assignment 3      | [Link](https://yucheng0208.github.io/ca2024f/) | 2024-10-25  | (Add any relevant notes)  |
+| 4     | Assignment 4      | [Link](https://yucheng0208.github.io/ca2024f/) | 2024-10-25  | (Add any relevant notes)  |
+| 5     | Assignment 5      | [Link](https://yucheng0208.github.io/ca2024f/) | 2024-10-29  | (Add any relevant notes)  |
 
 ---
 
