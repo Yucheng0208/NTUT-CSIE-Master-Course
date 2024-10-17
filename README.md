@@ -49,7 +49,7 @@ This repository is licensed under the [MIT License](LICENSE). You are free to us
 | 113-1         | 密碼學                          | [連結](./113-1/Cryptography/)                                                                     | <span style="color:green">修課中</span> | N/A   | N/A  |
 | 113-1         | 嵌入式系統                      | [連結](./113-1/Embedded%20System/)                                                                | <span style="color:green">修課中</span> | N/A   | N/A  |
 | 113-1         | 清華大學自然語言處理             | [連結](./113-1/NTHU%20Natural%20Language%20Processing/)                                            | <span style="color:green">修課中</span> | N/A   | N/A  |
-| 113-1         | 以模式為導向的軟體設計          | [連結](./113-1/Pattern-oriented%20Software%20Design/)                                             | <span style="color:red">開學退選</span> | N/A   | N/A  |
+| 113-1         | 樣式物件導向設計          | [連結](./113-1/Pattern-oriented%20Software%20Design/)                                             | <span style="color:red">開學退選</span> | N/A   | N/A  |
 
 **注意**  
 請注意，此儲存庫可能包含與課程相關的內容。使用或引用任何資料時，請務必承認作者和來源，以避免侵犯著作權。
