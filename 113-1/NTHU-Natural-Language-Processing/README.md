@@ -12,23 +12,18 @@
 **Course Code**:  
 (Course code here)
 
-**Course Name**:  
-(Course name here)
+**Course Name**:  Natural Language Processing
 
-**Instructor**:  
-(Instructor's name here)
+**Instructor**:  高宏宇
 
-**Course Rating**:  
-⭐⭐⭐⭐⭐ (Rating here)
+**Course Rating**:  ⭐⭐⭐⭐
 
-**Difficulty Level**:  
-⭐⭐⭐⭐⭐ (Difficulty level here)
+**Difficulty Level**:  ⭐⭐⭐⭐⭐
 
 **Future Evaluation**:  
 (Future evaluation notes here)
 
-**Prerequisite Skills**:  
-(List of prerequisite skills here)
+**Prerequisite Skills**: Artificial Intelligence, Machine Learning, Python
 
 **Course Materials**:  
 [Course Materials on GitHub](https://github.com/IKMLab/NTHU_Natural_Language_Processing)
@@ -76,23 +71,19 @@ The content shared here is for educational and reference purposes. The author of
 **課程代號**:  
 (填入課程代號)
 
-**課程名稱**:  
+**課程名稱**:  自然語言處理
 (填入課程名稱)
 
-**課程老師**:  
-(填入課程老師)
+**課程老師**:  高宏宇
 
-**課程評價**:  
-⭐⭐⭐⭐⭐ (填入評價)
+**課程評價**:  ⭐⭐⭐⭐
 
-**課程難度**:  
-⭐⭐⭐⭐⭐ (填入難度)
+**課程難度**:  ⭐⭐⭐⭐⭐
 
 **未來評估**:  
 (填入未來評估)
 
-**基礎技能**:  
-(填入基礎技能)
+**基礎技能**:  人工智慧概論, 機器學習, Python
 
 **課程教材**:  
 [GitHub 課程教材](https://github.com/IKMLab/NTHU_Natural_Language_Processing)
@@ -141,26 +132,21 @@ The content shared here is for educational and reference purposes. The author of
 **课程代码**:  
 (填入课程代码)
 
-**课程名称**:  
-(填入课程名称)
+**课程名称**:  自然语言处理 Natural Language Processing
 
-**课程老师**:  
-(填入课程老师)
+**课程老师**:  高宏宇
 
-**课程评价**:  
-⭐⭐⭐⭐⭐ (填入评价)
+**课程评价**:  ⭐⭐⭐⭐
 
-**课程难度**:  
-⭐⭐⭐⭐⭐ (填入难度)
+**课程难度**:  ⭐⭐⭐⭐⭐
 
 **未来评估**:  
 (填入未来评估)
 
-**基础技能**:  
-(填入基础技能)
+**基础技能**:  人工智能概论, 机器学习, Python
 
-**课程教材**:  
-[GitHub 课程教材](https://github.com/IKMLab/NTHU_Natural_Language_Processing)
+**课程材料**:  
+[GitHub 课程材料](https://github.com/IKMLab/NTHU_Natural_Language_Processing)
 
 ---
 
