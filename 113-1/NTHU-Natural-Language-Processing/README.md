@@ -39,11 +39,11 @@
 
 | No.   | Assignment No.    | Link to Assignment                                                 | Notes                    |
 |-------|-------------------|--------------------------------------------------------------------|--------------------------|
-| 1     | Assignment 1       | [Link](./Assignment1/)                                             | (Add any relevant notes)  |
-| 2     | Assignment 2       | [Link](./Assignment2/)                                             | (Add any relevant notes)  |
-| 3     | Assignment 3       | [Link](./Assignment3/)                                             | (Add any relevant notes)  |
-| ...   | Assignment X       | [Link](./AssignmentX/)                                             | (Add any relevant notes)  |
-
+| 1     | Assignment 1      | [Link](./Assignment1/)                                             | (Add any relevant notes)  |
+| 2     | Assignment 2      | [Link](./Assignment2/)                                             | (Add any relevant notes)  |
+| 3     | Assignment 3      | [Link](./Assignment3/)                                             | (Add any relevant notes)  |
+| 4     | Assignment 4      | [Link](./Assignment4/)                                             | (Add any relevant notes)  |
+| 5     | Final Project     | [Link](./Final-Project/)                                           | (Add any relevant notes)  |
 ---
 
 ## License & Academic Integrity Reminder
@@ -101,12 +101,13 @@ The content shared here is for educational and reference purposes. The author of
 
 ## 課程作業
 
-| 編號  | 作業名稱           | 作業連結                                                  | 備註                  |
-|-------|--------------------|-----------------------------------------------------------|-----------------------|
-| 1     | Assignment 1        | [連結](./Assignment1/)                                     | (填入相關備註)        |
-| 2     | Assignment 2        | [連結](./Assignment2/)                                     | (填入相關備註)        |
-| 3     | Assignment 3        | [連結](./Assignment3/)                                     | (填入相關備註)        |
-| ...   | Assignment X        | [連結](./AssignmentX/)                                     | (填入相關備註)        |
+| No.   | Assignment No.    | Link to Assignment                                                 | Notes                    |
+|-------|-------------------|--------------------------------------------------------------------|--------------------------|
+| 1     | Assignment 1      | [Link](./Assignment1/)                                             | (Add any relevant notes)  |
+| 2     | Assignment 2      | [Link](./Assignment2/)                                             | (Add any relevant notes)  |
+| 3     | Assignment 3      | [Link](./Assignment3/)                                             | (Add any relevant notes)  |
+| 4     | Assignment 4      | [Link](./Assignment4/)                                             | (Add any relevant notes)  |
+| 5     | Final Project     | [Link](./Final-Project/)                                           | (Add any relevant notes)  |
 
 ---
 
@@ -165,12 +166,13 @@ The content shared here is for educational and reference purposes. The author of
 
 ## 课程作业
 
-| 编号  | 作业名称           | 作业链接                                                   | 备注                   |
-|-------|--------------------|------------------------------------------------------------|------------------------|
-| 1     | Assignment 1        | [链接](./Assignment1/)                                      | (填入相关备注)         |
-| 2     | Assignment 2        | [链接](./Assignment2/)                                      | (填入相关备注)         |
-| 3     | Assignment 3        | [链接](./Assignment3/)                                      | (填入相关备注)         |
-| ...   | Assignment X        | [链接](./AssignmentX/)                                      | (填入相关备注)         |
+| No.   | Assignment No.    | Link to Assignment                                                 | Notes                    |
+|-------|-------------------|--------------------------------------------------------------------|--------------------------|
+| 1     | Assignment 1      | [Link](./Assignment1/)                                             | (Add any relevant notes)  |
+| 2     | Assignment 2      | [Link](./Assignment2/)                                             | (Add any relevant notes)  |
+| 3     | Assignment 3      | [Link](./Assignment3/)                                             | (Add any relevant notes)  |
+| 4     | Assignment 4      | [Link](./Assignment4/)                                             | (Add any relevant notes)  |
+| 5     | Final Project     | [Link](./Final-Project/)                                           | (Add any relevant notes)  |
 
 ---
 
