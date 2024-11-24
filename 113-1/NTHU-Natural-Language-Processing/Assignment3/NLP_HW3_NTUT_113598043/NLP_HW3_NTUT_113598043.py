@@ -77,38 +77,9 @@ def collate_fn(batch):
     
     return encodings, relatedness_scores, entailment_judgments
 
-
 # TODO1-2: Define your DataLoader
 dl_train = DataLoader(SemevalDataset(split="train"), batch_size=train_batch_size, collate_fn=collate_fn)
 dl_validation = DataLoader(SemevalDataset(split="validation"), batch_size=validation_batch_size, collate_fn=collate_fn)
-
-# %%
-class MultiLabelModel(torch.nn.Module):
-    def __init__(self, bert_model_name="bert-base-uncased"):
-        super(MultiLabelModel, self).__init__()
-        # 使用 Hugging Face 的 BERT 模型
-        self.bert = T.BertModel.from_pretrained(bert_model_name)
-        
-        # 線性層用於輸出相關性分數 (regression)
-        self.regressor = torch.nn.Linear(self.bert.config.hidden_size, 1)
-        
-        # 線性層用於輸出推理判斷 (classification)
-        self.classifier = torch.nn.Linear(self.bert.config.hidden_size, 3)  # 假設推理判斷有三個類別
-        
-    def forward(self, input_ids, attention_mask, token_type_ids=None):
-        # 使用 BERT 模型進行前向傳播
-        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
-        
-        # 獲取 [CLS] 標記的輸出（第0個位置）
-        cls_output = outputs.last_hidden_state[:, 0, :]
-        
-        # 預測相關性分數
-        relatedness_score = self.regressor(cls_output).squeeze(-1)  # 轉換形狀為 (batch_size,)
-        
-        # 預測推理判斷
-        entailment_judgment = self.classifier(cls_output)  # 輸出形狀為 (batch_size, num_classes)
-        
-        return relatedness_score, entailment_judgment
 
 
 # %%
