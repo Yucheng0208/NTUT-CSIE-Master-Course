@@ -38,7 +38,7 @@
 | 2     | Assignment 2      | [Link](./Assignment2/)                                             | (Add any relevant notes)  |
 | 3     | Assignment 3      | [Link](./Assignment3/)                                             | (Add any relevant notes)  |
 | 4     | Assignment 4      | [Link](./Assignment4/)                                             | (Add any relevant notes)  |
-| 5     | Final Project     | [Link](./Final-Project/)                                           | (Add any relevant notes)  |
+| 5     | Final Project     | [Link](https://github.com/Yucheng0208/NTU_COOL-NLP-Find_Project-Backup)                         | (Add any relevant notes)  |
 ---
 
 ## License & Academic Integrity Reminder
@@ -98,7 +98,7 @@ The content shared here is for educational and reference purposes. The author of
 | 2     | Assignment 2      | [Link](./Assignment2/)                                             | (Add any relevant notes)  |
 | 3     | Assignment 3      | [Link](./Assignment3/)                                             | (Add any relevant notes)  |
 | 4     | Assignment 4      | [Link](./Assignment4/)                                             | (Add any relevant notes)  |
-| 5     | Final Project     | [Link](./Final-Project/)                                           | (Add any relevant notes)  |
+| 5     | Final Project     | [Link](https://github.com/Yucheng0208/NTU_COOL-NLP-Find_Project-Backup)                         | (Add any relevant notes)  |
 
 ---
 
@@ -158,7 +158,7 @@ The content shared here is for educational and reference purposes. The author of
 | 2     | Assignment 2      | [Link](./Assignment2/)                                             | (Add any relevant notes)  |
 | 3     | Assignment 3      | [Link](./Assignment3/)                                             | (Add any relevant notes)  |
 | 4     | Assignment 4      | [Link](./Assignment4/)                                             | (Add any relevant notes)  |
-| 5     | Final Project     | [Link](./Final-Project/)                                           | (Add any relevant notes)  |
+| 5     | Final Project     | [Link](https://github.com/Yucheng0208/NTU_COOL-NLP-Find_Project-Backup)                         | (Add any relevant notes)  |
 
 ---
 
