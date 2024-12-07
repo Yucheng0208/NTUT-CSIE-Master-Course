@@ -38,7 +38,7 @@
 | 2     | Assignment 2      | [Link](./Assignment2/)                                             | (Add any relevant notes)  |
 | 3     | Assignment 3      | [Link](./Assignment3/)                                             | (Add any relevant notes)  |
 | 4     | Assignment 4      | [Link](./Assignment4/)                                             | (Add any relevant notes)  |
-| 5     | Final Project     | [Link](https://github.com/Yucheng0208/NTU_COOL-NLP-Find_Project-Backup)                         | (Add any relevant notes)  |
+| 5     | Term Project     | [Link](./Term_Project/)                                            | (Add any relevant notes)  |
 ---
 
 ## License & Academic Integrity Reminder
@@ -98,7 +98,7 @@ The content shared here is for educational and reference purposes. The author of
 | 2     | Assignment 2      | [Link](./Assignment2/)                                             | (Add any relevant notes)  |
 | 3     | Assignment 3      | [Link](./Assignment3/)                                             | (Add any relevant notes)  |
 | 4     | Assignment 4      | [Link](./Assignment4/)                                             | (Add any relevant notes)  |
-| 5     | Final Project     | [Link](https://github.com/Yucheng0208/NTU_COOL-NLP-Find_Project-Backup)                         | (Add any relevant notes)  |
+| 5     | Term Project     | [Link](./Term_Project/)                                            | (Add any relevant notes)  |
 
 ---
 
@@ -152,13 +152,13 @@ The content shared here is for educational and reference purposes. The author of
 
 ## 课程作业
 
-| No.   | Assignment No.    | Link to Assignment                                                 | Notes                    |
-|-------|-------------------|--------------------------------------------------------------------|--------------------------|
-| 1     | Assignment 1      | [Link](./Assignment1/)                                             | (Add any relevant notes)  |
-| 2     | Assignment 2      | [Link](./Assignment2/)                                             | (Add any relevant notes)  |
-| 3     | Assignment 3      | [Link](./Assignment3/)                                             | (Add any relevant notes)  |
-| 4     | Assignment 4      | [Link](./Assignment4/)                                             | (Add any relevant notes)  |
-| 5     | Final Project     | [Link](https://github.com/Yucheng0208/NTU_COOL-NLP-Find_Project-Backup)                         | (Add any relevant notes)  |
+| 编号 | 作业名称 | 作业链接 | 备注                 |
+| --- | ------- | ------- | ------------------- |
+| 1   | 作业 1 | [链接](./Assignment1/) | (Add any relevant notes)  |
+| 2   | 作业 2 | [链接](./Assignment2/) | (Add any relevant notes)  |
+| 3   | 作业 3 | [链接](./Assignment3/) | (Add any relevant notes)  |
+| 4   | 作业 4 | [链接](./Assignment4/) | (Add any relevant notes)  |
+| 5   | 学期作业 | [链接](./Term_Project/) | (Add any relevant notes)  |
 
 ---
 
