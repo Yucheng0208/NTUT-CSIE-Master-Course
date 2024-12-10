@@ -183,14 +183,14 @@
 </head>
 <body>
     <header>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/National_Taipei_University_of_Technology_logo.svg" alt="校徽" class="logo">
-        <h1 class="header-title">資訊工程系碩士班 修課資料</h1>
+        <img src="./img/Taipei-Tech-Logo.png" alt="校徽" class="logo">
+        <h1 class="header-title" id="main-title">北科大-資訊工程系碩士班修課資料</h1>
     </header>
 
     <main id="content">
         <section>
             <div class="section-header section-header-left">
-                <p><strong>入學年份：2024 秋季班</strong></p>
+                <p id="cohort"><strong>入學年份：2024 秋季班</strong></p>
                 <select id="semester-dropdown">
                     <option value="113-1">113年度 第一學期</option>
                     <option value="113-2">113年度 第二學期</option>
@@ -208,7 +208,7 @@
         </div>
         <p>© 2024 <a href="https://github.com/Yucheng0208">Yu-Cheng Chang's GitHub</a>. Licensed under MIT License.</p>
         <div class="disclaimer">
-            <p>此網頁由本人建置，供同儕及學弟妹參考使用。內容屬於個人主觀意見，不代表學校、系所或所有學生立場。</p>
+            <p id="disclaimer-text">此網頁由本人建置，供同儕及學弟妹參考使用。內容屬於個人主觀意見，不代表學校、系所或所有學生立場。</p>
         </div>
     </footer>
 
@@ -218,41 +218,97 @@
         const backToTop = document.getElementById('back-to-top');
         const semesterDropdown = document.getElementById("semester-dropdown");
         const courseContainer = document.getElementById("course-container");
+        const langZh = document.getElementById("lang-zh");
+        const langEn = document.getElementById("lang-en");
+        const mainTitle = document.getElementById("main-title");
+        const cohort = document.getElementById("cohort");
+        const disclaimerText = document.getElementById("disclaimer-text");
 
-        const courseData = {
-            "113-1": [
-                { name: "電腦動畫", code: "337851", teacher: "謝東儒", credits: 3, status: "修課中", language: "中文" },
-                { name: "Cryptography", code: "336160", teacher: "陳昱圻", credits: 3, status: "修課中", language: "英文" },
-                { name: "嵌入式系統", code: "338069", teacher: "張世豪", credits: 3, status: "修課中", language: "英文" },
-                { name: "自然語言處理", code: "343646", teacher: "高宏宇", credits: 3, status: "修課中", language: "中文" },
-                { name: "樣式物件導向設計 (POSD)", code: "336150", teacher: "鄭有進", credits: 3, status: "已停修", language: "中文" }
-            ],
-            "113-2": [
-                { name: "靜待更新", code: "-", teacher: "-", credits: "-", status: "靜待更新", language: "-" },
-                { name: "靜待更新", code: "-", teacher: "-", credits: "-", status: "靜待更新", language: "-" },
-                { name: "靜待更新", code: "-", teacher: "-", credits: "-", status: "靜待更新", language: "-" },
-                { name: "靜待更新", code: "-", teacher: "-", credits: "-", status: "靜待更新", language: "-" }
-            ]
+        const contentData = {
+            "zh-Hant": {
+                mainTitle: "資訊工程系碩士班修課資料",
+                cohort: "入學年份：2024 秋季班",
+                disclaimer: "此網頁由本人建置，供同儕及學弟妹參考使用。內容屬於個人主觀意見，不代表學校、系所或所有學生立場。",
+                courses: {
+                    "113-1": [
+                        { name: "電腦動畫", code: "337851", teacher: "謝東儒", credits: 3, status: "修課中", language: "中文", url: "./113-1/Computer-Animation/" },
+                        { name: "密碼學", code: "336160", teacher: "陳昱圻", credits: 3, status: "修課中", language: "英文", url: "./113-1/Cryptography" },
+                        { name: "嵌入式系統", code: "338069", teacher: "張世豪", credits: 3, status: "修課中", language: "英文", url: "./113-1/Embedded-System" },
+                        { name: "自然語言處理", code: "343646", teacher: "清華大學 高宏宇", credits: 3, status: "修課中", language: "中文", url: "./NTHU-Natural-Language-Processing" },
+                        { name: "樣式物件導向設計", code: "336150", teacher: "鄭有進", credits: 3, status: "已停修", language: "中文", url: "./Pattern-oriented-Software-Design" },
+                    ],
+                    "113-2": [
+                        { name: "靜待更新", code: "-", teacher: "-", credits: "-", status: "靜待更新", language: "-", url: "#" },
+                        { name: "靜待更新", code: "-", teacher: "-", credits: "-", status: "靜待更新", language: "-", url: "#" },
+                        { name: "靜待更新", code: "-", teacher: "-", credits: "-", status: "靜待更新", language: "-", url: "#" },
+                        { name: "靜待更新", code: "-", teacher: "-", credits: "-", status: "靜待更新", language: "-", url: "#" },
+                    ]
+                }
+            },
+            "en": {
+                mainTitle: "CSIE Master's Program Course Reference",
+                cohort: "Cohort: Fall 2024",
+                disclaimer: "This webpage is personally created to provide course reference for peers and juniors. The content reflects individual opinions and does not represent the views of the university, department, or all students.",
+                courses: {
+                    "113-1": [
+                        { name: "Computer Animation", code: "337851", teacher: "謝東儒", credits: 3, status: "In Progress", language: "Chinese", url: "./113-1/Computer-Animation/" },
+                        { name: "Cryptography", code: "336160", teacher: "陳昱圻", credits: 3, status: "In Progress", language: "English", url: "./113-1/Cryptography" },
+                        { name: "Embedded Systems", code: "338069", teacher: "張世豪", credits: 3, status: "In Progress", language: "English", url: "./113-1/Embedded-System" },
+                        { name: "Natural Language Processing", code: "343646", teacher: "清華大學 高宏宇", credits: 3, status: "In Progress", language: "Chinese", url: "./NTHU-Natural-Language-Processing" },
+                        { name: "Pattern-oriented Software Design (POSD)", code: "336150", teacher: "鄭有進", credits: 3, status: "Dropped", language: "Chinese", url: "./Pattern-oriented-Software-Design" },
+                    ],
+                    "113-2": [
+                        { name: "To Be Announced", code: "-", teacher: "-", credits: "-", status: "To Be Announced", language: "-", url: "#" },
+                        { name: "To Be Announced", code: "-", teacher: "-", credits: "-", status: "To Be Announced", language: "-", url: "#" },
+                        { name: "To Be Announced", code: "-", teacher: "-", credits: "-", status: "To Be Announced", language: "-", url: "#" },
+                        { name: "To Be Announced", code: "-", teacher: "-", credits: "-", status: "To Be Announced", language: "-", url: "#" },
+                    ]
+                }
+            }
         };
 
-        const renderCourses = (semester) => {
-            const courses = courseData[semester];
+        const renderCourses = (lang, semester) => {
+            const courses = contentData[lang].courses[semester];
             courseContainer.innerHTML = courses.map(course => `
                 <div class="course-card">
-                    <h3>授課課程: ${course.name}</h3>
+                    <h3>${course.name}</h3>
                     <p>課程代碼: ${course.code}</p>
                     <p>學分數: ${course.credits}</p>
                     <p>修課狀態: ${course.status}</p>
                     <p>授課教師: ${course.teacher}</p>
                     <p>講授語言: ${course.language}</p>
-                    <a href="#" class="view-materials-btn">檢視課程資料</a>
+                    <a href="${course.url}" class="view-materials-btn">檢視課程資料</a>
                 </div>
             `).join('');
         };
 
-        semesterDropdown.addEventListener("change", () => {
+        const updateLanguage = (lang) => {
+            const data = contentData[lang];
+            mainTitle.textContent = data.mainTitle;
+            cohort.textContent = data.cohort;
+            disclaimerText.textContent = data.disclaimer;
+
+            // 渲染當前選定學期的課程
             const selectedSemester = semesterDropdown.value;
-            renderCourses(selectedSemester);
+            renderCourses(lang, selectedSemester);
+        };
+
+        semesterDropdown.addEventListener("change", () => {
+            const selectedLang = document.body.lang || "zh-Hant";
+            const selectedSemester = semesterDropdown.value;
+            renderCourses(selectedLang, selectedSemester);
+        });
+
+        langZh.addEventListener("click", (e) => {
+            e.preventDefault();
+            document.body.lang = "zh-Hant";
+            updateLanguage("zh-Hant");
+        });
+
+        langEn.addEventListener("click", (e) => {
+            e.preventDefault();
+            document.body.lang = "en";
+            updateLanguage("en");
         });
 
         window.addEventListener('scroll', () => {
@@ -267,8 +323,9 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // 預設顯示 113年度 第一學期
-        renderCourses("113-1");
+        // 預設為繁體中文與 113年度 第一學期
+        document.body.lang = "zh-Hant";
+        updateLanguage("zh-Hant");
     </script>
 </body>
 </html>
