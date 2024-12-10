@@ -1,8 +1,8 @@
 # NTUT-CSIE-Master-Course
 
-## Language Selection | 語言選擇
+# Language Selection | 語言選擇
 - [NTUT-CSIE-Master-Course](#ntut-csie-master-course)
-  - [Language Selection | 語言選擇](#language-selection--語言選擇)
+- [Language Selection | 語言選擇](#language-selection--語言選擇)
 - [English Version](#english-version)
 - [繁體中文版本](#繁體中文版本)
 - [简体中文版本](#简体中文版本)
