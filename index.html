@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>國立臺北科技大學資訊工程系碩士班修課參考</title> <!-- 預設為中文版本的 title -->
+    <style>
+        /* 全局樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eaf8e6;
+        }
+
+        header {
+            background: #2e7d32;
+            color: #fff;
+            padding: 20px 10px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            height: 60px;
+        }
+
+        .language-selector {
+            display: flex;
+            align-items: center;
+        }
+
+        #language-dropdown {
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            background-color: #e0f2f1;
+            color: #00695c;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #semester-dropdown {
+            margin-top: 10px;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            background-color: #e0f2f1;
+            color: #00695c;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+        }
+
+        .course-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .course-card {
+            background: #f4fff4;
+            border: 1px solid #c8e6c9;
+            border-radius: 5px;
+            padding: 15px;
+            width: calc(33% - 20px);
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .course-card:hover {
+            transform: scale(1.05);
+        }
+
+        .course-card h3 {
+            margin: 0 0 10px 0;
+            color: #388e3c;
+        }
+
+        .course-card p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .view-materials-btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #66bb6a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .view-materials-btn:hover {
+            background-color: #43a047;
+        }
+
+        footer {
+            background: #2e7d32;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        footer a {
+            color: #a5d6a7;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            color: #ffffff;
+        }
+
+        .disclaimer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #c1f6c4; /* 淺綠色文字 */
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/National_Taipei_University_of_Technology_logo.svg" alt="國立台北科技大學校徽" class="logo">
+            <h1 id="page-title">國立臺北科技大學資訊工程系碩士班修課參考</h1>
+            <div class="language-selector">
+                <select id="language-dropdown">
+                    <option value="zh-Hant">繁體中文</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main id="content">
+        <section>
+            <div class="section-header">
+                <p><strong>入學年份：2024 秋季班</strong></p>
+                <select id="semester-dropdown">
+                    <option value="113-1">113年度 第一學期</option>
+                </select>
+            </div>
+            <div class="course-container" id="course-container">
+                <!-- 課程卡片將根據所選語言和學期動態生成 -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2024 <a href="https://github.com/Yucheng0208">Yu-Cheng Chang's GitHub</a>. Licensed under MIT License.</p>
+        <div class="disclaimer">
+            <p id="disclaimer-text">
+                此網頁由本人建置，供同儕及學弟妹參考使用。內容屬於個人主觀意見，不代表學校、系所或所有學生立場。
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const contentData = {
+            "zh-Hant": {
+                title: "國立臺北科技大學資訊工程系碩士班修課參考",
+                htmlTitle: "國立臺北科技大學資訊工程系碩士班修課參考",
+                cohort: "入學年份：2024 秋季班",
+                labels: {
+                    code: "課程代碼",
+                    credits: "學分數",
+                    status: "修課狀態",
+                    teacher: "授課教師",
+                    view: "檢視課程資料"
+                },
+                disclaimer: "此網頁由本人建置，供同儕及學弟妹參考使用。內容屬於個人主觀意見，不代表學校、系所或所有學生立場。",
+                courses: [
+                    { name: "電腦動畫", code: "337851", teacher: "謝東儒", credits: 3, status: "修課中" },
+                    { name: "密碼學", code: "336160", teacher: "陳昱圻", credits: 3, status: "修課中" },
+                    { name: "嵌入式系統", code: "338069", teacher: "張世豪", credits: 3, status: "修課中" },
+                    { name: "自然語言處理", code: "343646", teacher: "高宏宇", credits: 3, status: "修課中" },
+                    { name: "樣式物件導向設計 (POSD)", code: "336150", teacher: "鄭有進", credits: 3, status: "已停修" }
+                ]
+            },
+            "en": {
+                title: "National Taipei University of Technology Department of Computer Science and Information Engineering Master's Program Course Reference",
+                htmlTitle: "National Taipei University of Technology CSIE Master's Reference",
+                cohort: "Cohort: Fall 2024",
+                labels: {
+                    code: "Course Code",
+                    credits: "Credits",
+                    status: "Status",
+                    teacher: "Teacher",
+                    view: "View Materials"
+                },
+                disclaimer: "This webpage is personally created to provide course reference for peers and juniors. The content reflects individual opinions and does not represent the views of the university, department, or all students.",
+                courses: [
+                    { name: "Computer Animation", code: "337851", teacher: "謝東儒", credits: 3, status: "In Progress" },
+                    { name: "Cryptography", code: "336160", teacher: "陳昱圻", credits: 3, status: "In Progress" },
+                    { name: "Embedded Systems", code: "338069", teacher: "張世豪", credits: 3, status: "In Progress" },
+                    { name: "Natural Language Processing", code: "343646", teacher: "高宏宇", credits: 3, status: "In Progress" },
+                    { name: "Pattern-oriented Software Design (POSD)", code: "336150", teacher: "鄭有進", credits: 3, status: "Dropped" }
+                ]
+            }
+        };
+
+        const languageDropdown = document.getElementById("language-dropdown");
+        const courseContainer = document.getElementById("course-container");
+        const disclaimerText = document.getElementById("disclaimer-text");
+
+        const renderContent = (lang) => {
+            const data = contentData[lang];
+            document.title = data.htmlTitle; // 動態修改網頁 title
+            document.getElementById("page-title").textContent = data.title;
+            disclaimerText.textContent = data.disclaimer;
+            courseContainer.innerHTML = `
+                ${data.courses
+                    .map(
+                        (course) => `
+                        <div class="course-card">
+                            <h3>${course.name}</h3>
+                            <p>${data.labels.code}: ${course.code}</p>
+                            <p>${data.labels.credits}: ${course.credits}</p>
+                            <p>${data.labels.status}: ${course.status}</p>
+                            <p>${data.labels.teacher}: ${course.teacher}</p>
+                            <a href="#" class="view-materials-btn">${data.labels.view}</a>
+                        </div>`
+                    )
+                    .join("")}
+            `;
+        };
+
+        languageDropdown.addEventListener("change", (e) => {
+            renderContent(e.target.value);
+        });
+
+        // 預設語言
+        renderContent("zh-Hant");
+    </script>
+</body>
+</html>
