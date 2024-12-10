@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>資訊工程系碩士班 修課資料</title>
+    <link rel="icon" href="./img/Taipei-Tech-Logo.png" type="image/x-icon">
     <style>
         /* 全局樣式 */
         body {
@@ -165,16 +166,16 @@
             right: 20px;
             background-color: #66bb6a;
             color: white;
-            padding: 10px 15px;
-            border-radius: 50%;
+            padding: 10px 20px; /* 調整為相等的 padding 使其成為正方形 */
+            border-radius: 15px; /* 圓角效果 */
             text-align: center;
-            font-size: 20px;
+            font-size: 16px;
             cursor: pointer;
             box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
             display: none;
             transition: background-color 0.3s, transform 0.3s;
         }
-
+        
         .back-to-top:hover {
             background-color: #43a047;
             transform: scale(1.1);
@@ -191,9 +192,10 @@
         <section>
             <div class="section-header section-header-left">
                 <p id="cohort"><strong>入學年份：2024 秋季班</strong></p>
+                <label for="semester-dropdown"><strong>選擇學期：</strong></label>
                 <select id="semester-dropdown">
-                    <option value="113-1">113年度 第一學期</option>
-                    <option value="113-2">113年度 第二學期</option>
+                    <option value="113-1">113-1</option>
+                    <option value="113-2">113-2</option>
                 </select>
             </div>
             <div class="course-container" id="course-container">
@@ -212,7 +214,7 @@
         </div>
     </footer>
 
-    <div class="back-to-top" id="back-to-top">↑</div>
+    <div class="back-to-top" id="back-to-top">TOP</div>
 
     <script>
         const backToTop = document.getElementById('back-to-top');
@@ -243,7 +245,8 @@
                         { name: "靜待更新", code: "-", teacher: "-", credits: "-", status: "靜待更新", language: "-", url: "#" },
                         { name: "靜待更新", code: "-", teacher: "-", credits: "-", status: "靜待更新", language: "-", url: "#" },
                     ]
-                }
+                },
+                viewText: "檢視課程資料"
             },
             "en": {
                 mainTitle: "CSIE Master's Program Course Reference",
@@ -263,7 +266,8 @@
                         { name: "To Be Announced", code: "-", teacher: "-", credits: "-", status: "To Be Announced", language: "-", url: "#" },
                         { name: "To Be Announced", code: "-", teacher: "-", credits: "-", status: "To Be Announced", language: "-", url: "#" },
                     ]
-                }
+                },
+                viewText: "View Course Materials"
             }
         };
 
@@ -277,7 +281,7 @@
                     <p>修課狀態: ${course.status}</p>
                     <p>授課教師: ${course.teacher}</p>
                     <p>講授語言: ${course.language}</p>
-                    <a href="${course.url}" class="view-materials-btn">檢視課程資料</a>
+                    <a href="${course.url}" class="view-materials-btn">${contentData[lang].viewText}</a>
                 </div>
             `).join('');
         };
