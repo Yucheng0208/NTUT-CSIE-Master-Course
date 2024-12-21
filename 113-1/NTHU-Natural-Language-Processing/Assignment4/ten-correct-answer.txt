@@ -1,0 +1,30 @@
+Query: How much of a day do cats spend sleeping on average?
+Response: Cats spend approximately 16 to 18 hours per day sleeping on average. This translates to around 2/3 of the entire day, as mentioned in the context. However, it's also worth noting that this sleep time includes periods when they're still alert and responsive to stimuli while asleep.
+
+Status: Correct!
+Query: What is the technical term for a cat's hairball?
+Response: The technical term for a cat's hairball is a "bezoar." A bezoar is a small mass of material that forms in a cat's stomach when they swallow their own fur. It can become lodged and cause a blockage if it passes through the digestive tract.
+
+Status: Correct!
+Query: What do scientists believe caused cats to lose their sweet tooth?
+Response: Scientists believe that a mutation in a key taste receptor is the reason why cats lack a sweet tooth.
+
+Status: Correct!
+Query: What is the top speed a cat can travel over short distances?
+Response: A cat can travel at a top speed of approximately 31 mph (49 km) over a short distance. This speed allows cats to quickly escape, hunt, and navigate their surroundings. This impressive speed is typical for many domesticated breeds.
+
+Query: What is the name of the organ in a cat's mouth that helps it smell?
+Response: The Jacobson’s organ is the additional organ that allows cats to smell besides using their nose. It is located in the upper surface of a cat's mouth. This organ aids the sense of smell, particularly when a cat smells itself.
+
+Status: Correct!
+Query: Which wildcat is considered the ancestor of all domestic cats?
+Response: The African Wild Cat is considered the ancestor of all domestic cats. This species still exists today, implying a direct line of evolution between it and domesticated cats. It lived around 30 million years ago.
+
+Status: Correct!
+Query: What is the group term for cats?
+Response: The group of words associated with cat stem from the Latin catus, and are not a collective noun. A "clowder" is actually a collective noun for cats, referring to a large group of them.
+...
+Response: I don't know. Cats are born with four toes on each back paw, but the question isn't asking about cats being born with extra toes.
+
+Status: Correct!
+Correct numbers: 10
