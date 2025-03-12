@@ -1,0 +1,60 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "CG_Lab03",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "CG_Lab03::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-CG_Lab03-Debug-c93ed2f4c2020d3d2966.json",
+					"name" : "CG_Lab03",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/ryan/Documents/GitHub/NTUT-CSIE-Master-Course/113-2/Computer-Graphics/Lab03/cmake-build-debug",
+		"source" : "/Users/ryan/Documents/GitHub/NTUT-CSIE-Master-Course/113-2/Computer-Graphics/Lab03"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}
