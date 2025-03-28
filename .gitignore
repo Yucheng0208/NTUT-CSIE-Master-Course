@@ -413,3 +413,4 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json
 yarn.lock
+/113-2/Computer-Graphics/Lab04/cmake-build-debug
