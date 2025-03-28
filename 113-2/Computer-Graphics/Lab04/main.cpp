@@ -1,16 +1,16 @@
 #include <GL/freeglut.h>
 #include <iostream>
-#include <cmath>
+using namespace std;
 
-float rotateX = 0.0f, rotateY = 0.0f, rotateZ = 0.0f; // 原本的三軸旋轉角度
-float transX = 0.0f, transY = 0.0f, transZ = 0.0f; // 平移
-float scale = 1.0f;  // 縮放比例
-float angle = 0.0f;  // 任意軸自訂角度控制
+float rotateX = 0.0f, rotateY = 0.0f, rotateZ = 0.0f;
+float transX = 0.0f, transY = 0.0f, transZ = 0.0f;
+float scale = 1.0f;
+float angle = 0.0f;
 
+bool useCustomAxis = false;
 float v1[3] = {0, 0, 0};
-float v2[3] = {1, 1, 0};
+float v2[3] = {0, 0, 1};
 
-// 正規化向量
 void Normalize(float* v) {
     float len = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
     if (len > 0.0f) {
@@ -18,7 +18,6 @@ void Normalize(float* v) {
     }
 }
 
-// 建構 Rodrigues rotation matrix
 void BuildRotationMatrix(float* M, float angleDeg, float* axis) {
     float angleRad = angleDeg * M_PI / 180.0f;
     float c = cos(angleRad);
@@ -32,6 +31,28 @@ void BuildRotationMatrix(float* M, float angleDeg, float* axis) {
     M[12]= 0;             M[13]= 0;           M[14]= 0;           M[15]= 1;
 }
 
+void BuildTranslationMatrix(float* M, float x, float y, float z) {
+    for (int i = 0; i < 16; ++i) M[i] = (i % 5 == 0) ? 1.0f : 0.0f;
+    M[12] = x; M[13] = y; M[14] = z;
+}
+
+void BuildScaleMatrix(float* M, float s) {
+    for (int i = 0; i < 16; ++i) M[i] = 0.0f;
+    M[0] = M[5] = M[10] = s;
+    M[15] = 1.0f;
+}
+
+void MultiplyMatrix(const float* A, const float* B, float* result) {
+    for (int row = 0; row < 4; ++row) {
+        for (int col = 0; col < 4; ++col) {
+            result[row * 4 + col] = 0.0f;
+            for (int k = 0; k < 4; ++k) {
+                result[row * 4 + col] += A[row * 4 + k] * B[k * 4 + col];
+            }
+        }
+    }
+}
+
 void DrawAxes() {
     glLineWidth(2.0f);
     glBegin(GL_LINES);
@@ -42,10 +63,10 @@ void DrawAxes() {
 }
 
 void DrawArbitraryAxis() {
+    if (!useCustomAxis) return;
     glLineWidth(3.0f);
-    glColor3f(1, 0, 1); // 紫色
+    glColor3f(1, 0, 1);
     glBegin(GL_LINES);
-    // 延伸線長度倍數，避免太短不好看
     float ext = 5.0f;
     float dir[3] = { v2[0] - v1[0], v2[1] - v1[1], v2[2] - v1[2] };
     Normalize(dir);
@@ -55,40 +76,60 @@ void DrawArbitraryAxis() {
 }
 
 void DrawCube() {
+    glBegin(GL_QUADS);
     glColor3f(1, 1, 0);
-    glutSolidCube(2.0);
+    float s = 1.0f;
+    float v[8][3] = {
+        {-s, -s, -s}, { s, -s, -s}, { s,  s, -s}, {-s,  s, -s},
+        {-s, -s,  s}, { s, -s,  s}, { s,  s,  s}, {-s,  s,  s}
+    };
+    int faces[6][4] = {
+        {0, 1, 2, 3}, {1, 5, 6, 2}, {5, 4, 7, 6},
+        {4, 0, 3, 7}, {3, 2, 6, 7}, {4, 5, 1, 0}
+    };
+    for (int i = 0; i < 6; ++i) {
+        for (int j = 0; j < 4; ++j)
+            glVertex3fv(v[faces[i][j]]);
+    }
+    glEnd();
 }
 
 void RenderScene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-
     gluLookAt(5, 5, 10, 0, 0, 0, 0, 1, 0);
 
-    DrawAxes();            // 畫 XYZ 軸（世界座標）
-    DrawArbitraryAxis();   // 畫任意軸（世界座標）
+    DrawAxes();
+    DrawArbitraryAxis();
 
-    // 任意軸旋轉處理
-    float axis[3] = { v2[0] - v1[0], v2[1] - v1[1], v2[2] - v1[2] };
+    float axis[3];
+    if (useCustomAxis) {
+        axis[0] = v2[0] - v1[0];
+        axis[1] = v2[1] - v1[1];
+        axis[2] = v2[2] - v1[2];
+    } else {
+        axis[0] = 0;
+        axis[1] = 0;
+        axis[2] = 1; // default Z-axis
+    }
     Normalize(axis);
-    float R[16];
+
+    float T1[16], R[16], T2[16], S[16], Trans[16];
+    float M1[16], M2[16], M3[16], Final[16];
+
+    BuildTranslationMatrix(Trans, transX, transY, transZ);
+    BuildTranslationMatrix(T1, -v1[0], -v1[1], -v1[2]);
+    BuildTranslationMatrix(T2, v1[0], v1[1], v1[2]);
     BuildRotationMatrix(R, angle, axis);
+    BuildScaleMatrix(S, scale);
+
+    MultiplyMatrix(R, T1, M1);
+    MultiplyMatrix(T2, M1, M2);
+    MultiplyMatrix(S, M2, M3);
+    MultiplyMatrix(Trans, M3, Final);
 
     glPushMatrix();
-
-    // 任意軸旋轉變換
-    glTranslatef(v1[0], v1[1], v1[2]);
-    glMultMatrixf(R);
-    glTranslatef(-v1[0], -v1[1], -v1[2]);
-
-    // 原始旋轉和平移變換
-    glRotatef(rotateX, 1, 0, 0);
-    glRotatef(rotateY, 0, 1, 0);
-    glRotatef(rotateZ, 0, 0, 1);
-
-    glTranslatef(transX, transY, transZ);
-    glScalef(scale, scale, scale);
-
+    glMultMatrixf(Final);
     DrawCube();
     glPopMatrix();
 
@@ -97,37 +138,28 @@ void RenderScene() {
 
 void KeyPress(unsigned char key, int x, int y) {
     switch (key) {
-        case 'X': rotateX += 5; break;
-        case 'x': rotateX -= 5; break;
-        case 'Y': rotateY += 5; break;
-        case 'y': rotateY -= 5; break;
-        case 'Z': rotateZ += 5; break;
-        case 'z': rotateZ -= 5; break;
-
-        case 'U': angle += 45; break; // 任意軸劇烈旋轉
-        case 'u': angle -= 45; break;
-
-        case 'A': transX -= 0.5; break;
-        case 'D': transX += 0.5; break;
-        case 'W': transY += 0.5; break;
-        case 'S': transY -= 0.5; break;
-        case 'Q': transZ -= 0.5; break;
-        case 'E': transZ += 0.5; break;
-
+        case 'U': angle += 0.5f; break;
+        case 'u': angle -= 0.5f; break;
+        case 'W': transY += 0.5f; break;
+        case 'S': transY -= 0.5f; break;
+        case 'A': transX -= 0.5f; break;
+        case 'D': transX += 0.5f; break;
+        case 'Q': transZ -= 0.5f; break;
+        case 'E': transZ += 0.5f; break;
         case 'T': scale *= 1.1f; break;
         case 'R': scale /= 1.1f; break;
-
+        case 'X': cout << "Bye~"; exit(0);
         case 'I':
-            std::cout << "請輸入 v1(x y z) 與 v2(x y z)：";
-            std::cin >> v1[0] >> v1[1] >> v1[2] >> v2[0] >> v2[1] >> v2[2];
+            cout << "請輸入 v1(x y z) 與 v2(x y z)：";
+            cin >> v1[0] >> v1[1] >> v1[2] >> v2[0] >> v2[1] >> v2[2];
+            useCustomAxis = true;
             angle = 0.0f;
             break;
-
-        case ' ': // Reset 所有狀態
-            rotateX = rotateY = rotateZ = 0;
+        case ' ':
             transX = transY = transZ = 0;
-            scale = 1.0f;
             angle = 0.0f;
+            scale = 1.0f;
+            useCustomAxis = false;
             break;
     }
     glutPostRedisplay();
@@ -153,9 +185,6 @@ int main(int argc, char** argv) {
     glutDisplayFunc(RenderScene);
     glutReshapeFunc(ChangeSize);
     glutKeyboardFunc(KeyPress);
-
-    std::cout << "初始請輸入 v1(x y z) 與 v2(x y z)：";
-    std::cin >> v1[0] >> v1[1] >> v1[2] >> v2[0] >> v2[1] >> v2[2];
 
     glutMainLoop();
     return 0;
