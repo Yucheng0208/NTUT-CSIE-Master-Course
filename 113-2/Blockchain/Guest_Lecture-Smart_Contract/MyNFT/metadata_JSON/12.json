@@ -1,0 +1,26 @@
+{
+  "dna": "b5ba91d09041caa120f20cb51e967f06",
+  "name": "MyNFT #12",
+  "description": null,
+  "image": "https://shallow-salmon-marmot.myfilebase.com/ipfs/QmULZjDJi6U8BZCrUVXJyAoZAPSUTXAEGevY673fcPACaU/12.png",
+  "date": 1742276308520,
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "6"
+    },
+    {
+      "trait_type": "Body",
+      "value": "2"
+    },
+    {
+      "trait_type": "Flag",
+      "value": "1"
+    },
+    {
+      "trait_type": "Animal",
+      "value": "2"
+    }
+  ],
+  "compiler": "mintables.club"
+}
