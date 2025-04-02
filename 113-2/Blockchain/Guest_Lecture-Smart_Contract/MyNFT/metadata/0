@@ -1,0 +1,26 @@
+{
+  "dna": "d0ad143328f163b1211df24f11bf9e6e",
+  "name": "MyNFT #0",
+  "description": null,
+  "image": "REPLACE-THIS-WITH-YOUR-URL/0.png",
+  "date": 1742276307550,
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "6"
+    },
+    {
+      "trait_type": "Body",
+      "value": "2"
+    },
+    {
+      "trait_type": "Flag",
+      "value": "2"
+    },
+    {
+      "trait_type": "Animal",
+      "value": "1"
+    }
+  ],
+  "compiler": "mintables.club"
+}
