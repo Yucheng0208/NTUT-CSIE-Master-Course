@@ -421,3 +421,9 @@ yarn.lock
 **/cmake_install.cmake
 **/cmale_build_debug/
 **/Makefile
+
+# .idea files
+.idea/
+.idea_modules/
+**/.idea/
+**/.idea_modules/
