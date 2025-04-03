@@ -418,7 +418,5 @@ yarn.lock
 **/CMakeFiles/
 **/CMakeCache.txt
 **/cmake_install.cmake
-**/cmake_build_debug/
-**/cmake_build_debug
 **/cmake-build-debug/
 **/Makefile
