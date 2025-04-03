@@ -413,17 +413,10 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json
 yarn.lock
-/113-2/Computer-Graphics/Lab04/cmake-build-debug
 
 # CMake files
 **/CMakeFiles/
 **/CMakeCache.txt
 **/cmake_install.cmake
-**/cmale_build_debug/
+**/cmake_build_debug/
 **/Makefile
-
-# .idea files
-.idea/
-.idea_modules/
-**/.idea/
-**/.idea_modules/
