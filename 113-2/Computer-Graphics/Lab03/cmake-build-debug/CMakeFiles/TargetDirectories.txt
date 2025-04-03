@@ -1,3 +1,0 @@
-/Users/ryan/Documents/GitHub/NTUT-CSIE-Master-Course/113-2/Computer-Graphics/Lab03/cmake-build-debug/CMakeFiles/CG_Lab03.dir
-/Users/ryan/Documents/GitHub/NTUT-CSIE-Master-Course/113-2/Computer-Graphics/Lab03/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/ryan/Documents/GitHub/NTUT-CSIE-Master-Course/113-2/Computer-Graphics/Lab03/cmake-build-debug/CMakeFiles/rebuild_cache.dir
