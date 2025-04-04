@@ -38,6 +38,3 @@ The repository includes resources for the following courses:
 
 ## License
 This project is licensed under the [MIT License](./LICENSE).
-
----
-For any questions or issues, please contact the repository maintainer.
