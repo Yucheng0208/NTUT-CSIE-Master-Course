@@ -43,9 +43,56 @@ Replace `{version}` with your installed version of CLion.
  Ensure you copy the appropriate files into the corresponding MinGW directories.
 
 ## Notes
-- This setup is specifically for the MinGW environment bundled with CLion.
+- This setup is specifically for the MinGW environment bundled with [CLion](https://www.jetbrains.com/clion/promo/?source=google&medium=cpc&campaign=APAC_en_ASIA_Clion_Branded&term=clion&content=489240779651&gad_source=1&gclid=Cj0KCQjwqcO_BhDaARIsACz62vM64kCXdmxID8F7USdmngq7kVlNhcBpK-Eqy1M8J1zI85fGiZ-IiGsaAsbDEALw_wcB).
 - Ensure that the paths are correct and that you do not overwrite any existing files unless necessary.
 - If you encounter any issues, double-check that the files are placed in the correct directories.
 - If you need to upgrade freeglut, you can download it from the [freeglut website](https://www.transmissionzero.co.uk/software/freeglut-devel/).
 
 By following these steps, you should be able to successfully configure Freeglut for use with CLion's MinGW environment. Happy coding!
+
+---
+
+## CMakeLists.txt
+
+```
+cmake_minimum_required(VERSION 3.10)
+project({Project_Name})
+
+set(CMAKE_CXX_STANDARD 14)
+
+if (APPLE)
+    message(STATUS "Detected macOS")
+
+    include_directories(/opt/homebrew/include)
+    link_directories(/opt/homebrew/lib)
+
+    add_definitions(-DGL_SILENCE_DEPRECATION)
+
+    add_executable({Project_Name} {main.cpp})
+
+    target_link_libraries({Project_Name} 
+        "-framework OpenGL"
+        "-framework GLUT"
+        "-framework Cocoa"
+    )
+
+elseif (WIN32)
+    message(STATUS "Detected Windows with MinGW")
+
+    include_directories(${PROJECT_SOURCE_DIR}/include)
+    link_directories(${PROJECT_SOURCE_DIR}/lib)
+
+    add_executable({Project_Name} {main.cpp})
+
+    target_link_libraries({Project_Name}
+        freeglut
+        opengl32
+        glu32
+    )
+endif()
+```
+
+### Notes:
+- Replace `{Project_Name}` with the name of your project.
+- Replace `{main.cpp}` with the name of your main source file.
+- Ensure that the file paths and names match your project's structure.
