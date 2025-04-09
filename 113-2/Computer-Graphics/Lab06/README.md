@@ -1,98 +1,60 @@
-# Computer Graphics 電腦圖學
+# Clickable 2D Grid
 
-## Lab 05: Dual Viewport with Arbitrary Rotation 雙視窗任意軸旋轉
+此專案是一個使用 OpenGL 和 FreeGLUT 實作的 2D 點擊式格線應用程式。使用者可以透過滑鼠點擊格子來填色，並透過右鍵選單切換格線大小。
 
-### 說明
-本次實驗實作了雙視窗的 3D 空間物體任意軸旋轉功能，並結合平移與縮放操作，讓使用者可以透過鍵盤與滑鼠操作來控制物體的變換。
+## 功能
 
-### 功能
-1. **雙視窗顯示**：
-   - 左右兩個視窗分別顯示不同的物體變換狀態。
-   - 支援切換操作的活躍視窗。
+1. **顯示格線**：預設為 10x10 的格線，格線顏色為白色。
+2. **填色功能**：點擊格子後，該格子會被填色，(0,0) 格子為黃色，其餘格子為綠色。
+3. **動態調整格線大小**：透過右鍵選單可切換格線大小為 10x10、15x15 或 20x20。
+4. **右鍵選單**：
+   - Grid 10x10
+   - Grid 15x15
+   - Grid 20x20
+   - Exit (退出程式)
 
-2. **任意軸旋轉**：
-   - 使用滑鼠點擊定義旋轉軸的兩個端點 `P` 和 `-P`。
-   - 支援以自訂軸進行旋轉，或使用預設的 Z 軸。
+## 程式架構
 
-3. **平移**：
-   - 使用鍵盤控制物體在 X、Y、Z 軸方向上的平移。
+- **初始化 (`init`)**：設定背景顏色、投影矩陣，並初始化預設填色格子。
+- **畫格線 (`drawGrid`)**：繪製白色格線。
+- **畫被填色的格子 (`drawFilledCells`)**：繪製已被點擊的格子，顏色依座標不同而異。
+- **顯示 (`display`)**：清除畫面並繪製格線與填色格子。
+- **滑鼠事件 (`mouse`)**：處理滑鼠點擊事件，將點擊的螢幕座標轉換為格子座標，並填色。
+- **選單事件 (`selectFromMenu`)**：處理右鍵選單選項，切換格線大小或退出程式。
+- **建立選單 (`buildPopupMenu`)**：建立右鍵選單並綁定選單事件。
 
-4. **縮放**：
-   - 支援物體的放大與縮小操作。
+## 使用方式
+1. 左鍵點擊格子進行填色。
+2. 右鍵開啟選單，選擇格線大小或退出程式。
 
-5. **重置**：
-   - 可快速重置物體的變換狀態。
+## 程式碼重點
 
-6. **退出**：
-   - 支援快捷鍵退出程式。
+- 格線繪製
 
-### 操作說明
-| 操作方式       | 功能                                                                 |
-|----------------|----------------------------------------------------------------------|
-| 滑鼠左鍵       | 定義旋轉軸的兩個端點 `P` 和 `-P`，以滑鼠點擊位置計算世界座標。         |
-| `Tab`          | 切換活躍視窗（左或右）。                                             |
-| `U` / `u`      | 順時針 / 逆時針旋轉角度增加或減少 5°。                               |
-| `W` / `S`      | 向上 / 向下平移。                                                   |
-| `A` / `D`      | 向左 / 向右平移。                                                   |
-| `Q` / `E`      | 向前 / 向後平移。                                                   |
-| `T` / `R`      | 放大 / 縮小物體。                                                   |
-| `Space`        | 重置當前視窗的物體變換與旋轉軸設定。                                 |
-| `X` / `Esc`    | 退出程式。                                                          |
+```
+for (int i = -gridSize; i <= gridSize + 1; i++) {
+    glVertex2f(i, -gridSize);
+    glVertex2f(i, gridSize + 1);
+    glVertex2f(-gridSize, i);
+    glVertex2f(gridSize + 1, i);
+}
+```
 
-### 程式架構
-1. **雙視窗管理**：
-   - 使用 OpenGL 的 `glViewport` 分割視窗。
-   - 支援滑鼠點擊與鍵盤操作切換活躍視窗。
+- 螢幕座標轉格子座標
+```
+float normX = (float)x / windowWidth;
+float normY = (float)(windowHeight - y) / windowHeight;
+float worldX = normX * (2 * gridSize + 1) - gridSize;
+float worldY = normY * (2 * gridSize + 1) - gridSize;
+int gridX = (int)floor(worldX);
+int gridY = (int)floor(worldY);
+```
 
-2. **矩陣運算**：
-   - 包括旋轉矩陣、平移矩陣、縮放矩陣的生成與矩陣相乘。
-
-3. **繪製功能**：
-   - 繪製三軸（X、Y、Z）與自訂軸。
-   - 繪製立方體作為變換的物體。
-
-4. **輸入處理**：
-   - 透過 `glutKeyboardFunc` 處理鍵盤輸入，實現變換操作。
-   - 透過 `glutMouseFunc` 處理滑鼠點擊，計算旋轉軸。
-
-5. **渲染與視窗管理**：
-   - 使用 OpenGL 的 `glut` 函式庫進行場景渲染與視窗大小調整。
-
-### 執行畫面
-- **初始狀態**：
-  - 左右視窗顯示三軸與立方體。
-- **操作後**：
-  - 立方體根據輸入進行旋轉、平移或縮放，並顯示自訂旋轉軸。
-
-### 編譯與執行
-1. **設定 CLion 專案**：
-   - 在 CLion 中開啟專案資料夾。
-   - 確保 `CMakeLists.txt` 已正確設定，範例如下：
-     ```cmake
-     cmake_minimum_required(VERSION 3.10)
-     project(Lab05)
-
-     set(CMAKE_CXX_STANDARD 11)
-
-     find_package(OpenGL REQUIRED)
-     find_package(GLUT REQUIRED)
-
-     include_directories(${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS})
-     link_directories(${OPENGL_LIBRARY_DIRS} ${GLUT_LIBRARY_DIRS})
-
-     add_executable(Lab05 Lab05.cpp)
-     target_link_libraries(Lab05 ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
-     ```
-
-2. **編譯**：
-   - 點擊 CLion 的 **Build** 按鈕，或使用快捷鍵 `Command + F9`。
-
-3. **執行**：
-   - 點擊 CLion 的 **Run** 按鈕，或使用快捷鍵 `Control + R`。
-
-### 注意事項
-- 請確保已安裝 OpenGL 開發環境（如 `freeglut`）。
-- 若無法正常執行，請檢查是否正確連結相關函式庫。
-
-### 結論
-本次實驗透過雙視窗的設計，結合矩陣運算與 OpenGL 的功能，實現了 3D 空間中物體的任意軸旋轉與多種變換操作，幫助理解 3D 變換的基本概念與視窗管理技術。
+- 右鍵選單建立
+```
+int menu = glutCreateMenu(selectFromMenu);
+glutAddMenuEntry("Grid 10x10", MENU_GRID_10);
+glutAddMenuEntry("Grid 15x15", MENU_GRID_15);
+glutAddMenuEntry("Grid 20x20", MENU_GRID_20);
+glutAddMenuEntry("Exit", MENU_EXIT);
+```
