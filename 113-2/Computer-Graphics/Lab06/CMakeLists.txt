@@ -27,9 +27,9 @@ elseif (WIN32)
     include_directories(${PROJECT_SOURCE_DIR}/include)
     link_directories(${PROJECT_SOURCE_DIR}/lib)
 
-    add_executable(CG_Lab05 main.cpp)
+    add_executable(CG_Lab06 main.cpp)
 
-    target_link_libraries(CG_Lab05
+    target_link_libraries(CG_Lab06
             freeglut
             opengl32
             glu32
