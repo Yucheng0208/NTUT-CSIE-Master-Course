@@ -1,5 +1,19 @@
 # Google Cloud Skills Boost Google Cloud
 
+- [Google Cloud Skills Boost Google Cloud](#google-cloud-skills-boost-google-cloud)
+  - [02 Google Cloud Fundamentals: Core Infrastructure](#02-google-cloud-fundamentals-core-infrastructure)
+    - [Introducing Google Cloud](#introducing-google-cloud)
+    - [Resources and Access in the Cloud](#resources-and-access-in-the-cloud)
+    - [Getting Started with VPC Networking and Google Compute Engine](#getting-started-with-vpc-networking-and-google-compute-engine)
+    - [Storage in the Cloud](#storage-in-the-cloud)
+      - [Containers in the Cloud](#containers-in-the-cloud)
+    - [Applications in the Cloud](#applications-in-the-cloud)
+    - [Prompt Engineering](#prompt-engineering)
+  - [03 Essential Google Cloud Infrastructure: Foundation](#03-essential-google-cloud-infrastructure-foundation)
+    - [Interacting with Google Cloud](#interacting-with-google-cloud)
+    - [Vistual Networks](#vistual-networks)
+      - [Vistual Machines](#vistual-machines)
+
 ## 02 Google Cloud Fundamentals: Core Infrastructure
 
 ### Introducing Google Cloud
