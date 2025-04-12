@@ -387,6 +387,8 @@
 > **說明：** 可以，使用 承諾使用折扣（Committed Use Discounts），承諾使用一至三年，可以大幅降低成本。
 
 ## Final Project
+> Comming Soon...
+
 
 ## Disclaimer
 > [!CAUTION]
