@@ -1,4 +1,14 @@
 # Cloud and IoT Security Cource Q&A (Zuvio IRS)
+- [Cloud and IoT Security Cource Q\&A (Zuvio IRS)](#cloud-and-iot-security-cource-qa-zuvio-irs)
+  - [MidTerm Exam](#midterm-exam)
+    - [Week 2 - Introduction to Cloud Computing](#week-2---introduction-to-cloud-computing)
+    - [Week 5 - Virtual Machine and Networks in the Cloud](#week-5---virtual-machine-and-networks-in-the-cloud)
+    - [Week 5 - Sotrage in the Cloud](#week-5---sotrage-in-the-cloud)
+    - [Week 6](#week-6)
+    - [Week 7](#week-7)
+    - [Week 8](#week-8)
+  - [Final Project](#final-project)
+  - [Disclaimer](#disclaimer)
 
 ## MidTerm Exam
 
@@ -375,6 +385,8 @@
 > **Answers:** Yes, using `Committed Use Discounts` can significantly reduce costs by committing to a one- or three-year usage plan.
 
 > **說明：** 可以，使用 承諾使用折扣（Committed Use Discounts），承諾使用一至三年，可以大幅降低成本。
+
+## Final Project
 
 ## Disclaimer
 > [!CAUTION]
