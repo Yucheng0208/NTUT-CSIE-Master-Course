@@ -1,4 +1,4 @@
-# Cloud and IoT Security Cource Q&A (Zuvio IRS)
+# Cloud and IoT Security Course Q&A (Zuvio IRS)
 - [Cloud and IoT Security Cource Q\&A (Zuvio IRS)](#cloud-and-iot-security-cource-qa-zuvio-irs)
   - [MidTerm Exam](#midterm-exam)
     - [Week 2 - Introduction to Cloud Computing](#week-2---introduction-to-cloud-computing)
