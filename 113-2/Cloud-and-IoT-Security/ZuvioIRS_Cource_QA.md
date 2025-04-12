@@ -296,14 +296,15 @@
 > - Cloud SDK（gcloud CLI）：本機指令列工具。
 > - Client Libraries：透過程式語言以程式方式存取。
 2. Take a look at the GCP Cloud Shell documentation webpage and answer question 1:
-   1) What are at least 3 things you can do with Cloud Shell?
-   2) Based on the Lab contents, what is the Cloud Shell basically? (What is running the Cloud Shell?) And if you want to create a persistent state in Cloud Shell, what should you do?
+   - 1) What are at least 3 things you can do with Cloud Shell?
+   - 2) Based on the Lab contents, what is the Cloud Shell basically? (What is running the Cloud Shell?) And if you want to create a persistent state in Cloud Shell, what should you do?
 > **Answers:** </br>
 > 1)
 > - Manage GCP resources with command-line tools.
 > - Edit files using an integrated code editor.
-> - Run Cloud SDK and other pre-installed tools.
-> 2) Cloud Shell is a Debian-based virtual machine provisioned temporarily. To create a persistent state, you should store files in the `$HOME` directory, which persists across sessions.
+> - Run Cloud SDK and other pre-installed tools.</br>
+> 2)
+> - Cloud Shell is a Debian-based virtual machine provisioned temporarily. To create a persistent state, you should store files in the `$HOME` directory, which persists across sessions.
 
 > **說明：** </br>
 > 1)
