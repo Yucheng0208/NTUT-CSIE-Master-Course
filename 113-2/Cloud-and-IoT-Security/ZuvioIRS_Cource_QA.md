@@ -127,18 +127,18 @@
 15. Please explain the upside and downside of using:
     a) Peering 
     b) Dedicated Interconnect to connect to Google Cloud VPC.
-> **Answers:**
+> **Answers:** </br>
 > a) Peering
 > - Upside: Simple and low cost.
-> - Downside: Limited traffic and no guaranteed bandwidth.
+> - Downside: Limited traffic and no guaranteed bandwidth. </br>
 > b) Dedicated Interconnect
 > - Upside: High bandwidth, low latency, and a dedicated connection.
 > - Downside: High cost and requires more configuration.
 
-> **說明：**
+> **說明：**</br>
 > a) Peering
 > - 優點：簡單，低成本。
-> - 缺點：流量受限，無保證帶寬。
+> - 缺點：流量受限，無保證帶寬。</br>
 > b) Dedicated Interconnect
 > - 優點：高頻寬、低延遲、專屬線路。
 > - 缺點：成本高，需要更多設定。
@@ -296,10 +296,10 @@
 > 2) Cloud Shell is a Debian-based virtual machine provisioned temporarily. To create a persistent state, you should store files in the `$HOME` directory, which persists across sessions.
 
 > **說明：**
-> > 1)
+> 1)
 > - 使用命令列工具管理 GCP 資源。
 > - 使用內建的程式碼編輯器編輯檔案。
-> - 執行 Cloud SDK 與其他預先安裝的工具。
+> - 執行 Cloud SDK 與其他預先安裝的工具。 </br>
 > 2) Cloud Shell 是基於 Debian 的虛擬機，為暫時性資源。若要保持資料，需將檔案儲存於 `$HOME` 目錄中，該目錄會在不同工作階段間保留。
 
 
@@ -369,5 +369,6 @@
 > **Answers:** Yes, using `Committed Use Discounts` can significantly reduce costs by committing to a one- or three-year usage plan.
 > **說明：** 可以，使用 承諾使用折扣（Committed Use Discounts），承諾使用一至三年，可以大幅降低成本。
 
-> [!Caution] The answers provided are for reference purposes only. If there are any errors, please kindly let us know.  
+## Disclaimer
+>[!Caution] The answers provided are for reference purposes only. If there are any errors, please kindly let us know.  
 > Since the questions are part of the course's intellectual property, they may be used as a reference but must not be reproduced or distributed without permission to avoid violating intellectual property and copyright laws.
