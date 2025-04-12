@@ -370,5 +370,6 @@
 > **說明：** 可以，使用 承諾使用折扣（Committed Use Discounts），承諾使用一至三年，可以大幅降低成本。
 
 ## Disclaimer
->[!Caution] The answers provided are for reference purposes only. If there are any errors, please kindly let us know.  
+> [!CAUTION]
+> The answers provided are for reference purposes only. If there are any errors, please kindly let us know.  
 > Since the questions are part of the course's intellectual property, they may be used as a reference but must not be reproduced or distributed without permission to avoid violating intellectual property and copyright laws.
