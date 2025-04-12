@@ -1,4 +1,4 @@
-# Cloud and IoT Security Cource (Zuvio IRS - Q&A)
+# Cloud and IoT Security Cource Q&A (Zuvio IRS)
 
 ## MidTerm Exam
 
