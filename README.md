@@ -26,7 +26,7 @@ The repository includes resources for the following courses:
 ### 113-2 (Spring Semester Year 2025)
   - [Blockchain Techniques and Applications](./113-2/Blockchain-Techniques-and-Applications)
   - [Computer Graphics](./113-2/Computer-Graphics)
-  - [Cloud and IoT Security](./113-2/)
+  - [Cloud and IoT Security](./113-2/Cloud-and-IoT-Security)
   - [Data Science Principles with Applications on Educational Data](./113-2/Data-Science-Principles-with-Applications-on-Educational-Data)
 
 ## Getting Started
@@ -35,6 +35,9 @@ The repository includes resources for the following courses:
     git clone https://github.com/your-username/NTUT-CSIE-Master-Course.git
     ```
 2. Navigate to the desired course folder to access materials.
+
+> [!CAUTION]  
+> The course materials, including assignments, are protected under the [MIT License](./LICENSE). However, the lecture slides and teaching presentations are the intellectual property of the respective instructors. If you wish to use these materials, please adhere to proper citation guidelines and ensure that you do not infringe upon the copyrights of others.
 
 ## License
 This project is licensed under the [MIT License](./LICENSE).
