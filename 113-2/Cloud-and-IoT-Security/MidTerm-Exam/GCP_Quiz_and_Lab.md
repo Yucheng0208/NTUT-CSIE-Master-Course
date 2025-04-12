@@ -13,6 +13,7 @@
     - [Interacting with Google Cloud](#interacting-with-google-cloud)
     - [Vistual Networks](#vistual-networks)
       - [Vistual Machines](#vistual-machines)
+  - [Disclaimer](#disclaimer)
 
 ## 02 Google Cloud Fundamentals: Core Infrastructure
 
@@ -279,3 +280,8 @@
     - [ ] Persistent disks are physical hardware devices connected directly to VMs.
     - [ ] Once created, a persistent disk cannot be resized.
 > 說明：持久磁碟預設會進行加密。
+
+## Disclaimer
+> [!CAUTION]
+> The answers provided are for reference purposes only. If there are any errors, please kindly let us know.  
+> Since the questions are part of the course's intellectual property, they may be used as a reference but must not be reproduced or distributed without permission to avoid violating intellectual property and copyright laws.
