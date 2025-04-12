@@ -345,28 +345,35 @@
 > - 雲端專線互連
 > - 負載平衡
 > - 私有 Google 存取
+
 2. Please briefly describe VM Lifecycles.
 > **Answers:** VM lifecycles include creation, running, stopping, suspending, resuming, and terminating instances.
+
 > **說明：** 虛擬機生命周期包含建立、運行、停止、暫停、恢復與終止等狀態。
 
 3. (True or False) "A terminated VM instance will not incur charges."
 > **Answers:** True.
+
 > **說明：** 正確，終止的虛擬機不會產生額外費用。
 
 4. Why are VM instances divided into many different categories? What's the purpose of that?
 > **Answers:** VM instances are categorized to optimize cost and performance for different workloads, such as general-purpose, memory-optimized, and compute-optimized tasks.
+
 > **說明：** 將虛擬機分成不同類型，能針對不同工作負載（如通用型、記憶體優化型、運算優化型）最佳化成本與效能。
 
 5. John Cenee is looking for a cost-effective VM solution for his large-scale, computation-intensive tasks. Which VM type would you recommend? Please justify your answer.
 > **Answers:** Recommend `Compute-Optimized VMs (C2 instances)` because they offer high CPU performance suitable for heavy computation tasks.
+
 > **說明：** 建議使用`運算優化型虛擬機（C2 類型）`，因為它們提供高 CPU 效能，適合大量計算任務。
 
 6. Trumpee is looking for an economical VM solution to calculate basic math for his tariffs. While we suggest doing the calculations on his own, he insists on using VMs. His workload fluctuates significantly, with sudden spikes in demand followed by long periods of inactivity. What kind of VM type and configuration would you recommand? Please justify your answer.
 > **Answers:** Recommend `Preemptible VMs` or `Auto-scaling managed instance groups` to handle fluctuating workloads cost-effectively.
+
 > **說明：**建議使用`可搶占式虛擬機`或`自動擴展的受控實例群組`，以應對波動性大的工作負載並控制成本。
 
 7. Kamalee is looking for a VM solution for her predictable, consistent workload with an expected 2-year usage period. She's on a tight budget. Is there any way to get a discounted price? Please explain your answer.
 > **Answers:** Yes, using `Committed Use Discounts` can significantly reduce costs by committing to a one- or three-year usage plan.
+
 > **說明：** 可以，使用 承諾使用折扣（Committed Use Discounts），承諾使用一至三年，可以大幅降低成本。
 
 ## Disclaimer
