@@ -140,7 +140,8 @@
 > **Answers:** </br>
 > a) Peering
 > - Upside: Simple and low cost.
-> - Downside: Limited traffic and no guaranteed bandwidth. </br>
+> - Downside: Limited traffic and no guaranteed bandwidth.
+
 > b) Dedicated Interconnect
 > - Upside: High bandwidth, low latency, and a dedicated connection.
 > - Downside: High cost and requires more configuration.
@@ -148,7 +149,8 @@
 > **說明：**</br>
 > a) Peering
 > - 優點：簡單，低成本。
-> - 缺點：流量受限，無保證帶寬。</br>
+> - 缺點：流量受限，無保證帶寬。
+
 > b) Dedicated Interconnect
 > - 優點：高頻寬、低延遲、專屬線路。
 > - 缺點：成本高，需要更多設定。
@@ -215,7 +217,9 @@
     c) Your own computer / laptop
 > **Answers:**
 > a) Containers: Lightweight, share the host OS kernel, and package applications with dependencies.
+
 > b) Virtual Machines: Full OS virtualization, each VM has its own OS and hardware emulation.
+
 > c) Computer/Laptop: Physical hardware running a full operating system directly.
 
 > **說明：**
