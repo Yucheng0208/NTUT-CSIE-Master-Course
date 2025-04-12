@@ -295,7 +295,7 @@
 > - Run Cloud SDK and other pre-installed tools.
 > 2) Cloud Shell is a Debian-based virtual machine provisioned temporarily. To create a persistent state, you should store files in the `$HOME` directory, which persists across sessions.
 
-> **說明：**
+> **說明：** </br>
 > 1)
 > - 使用命令列工具管理 GCP 資源。
 > - 使用內建的程式碼編輯器編輯檔案。
@@ -369,7 +369,7 @@
 6. Trumpee is looking for an economical VM solution to calculate basic math for his tariffs. While we suggest doing the calculations on his own, he insists on using VMs. His workload fluctuates significantly, with sudden spikes in demand followed by long periods of inactivity. What kind of VM type and configuration would you recommand? Please justify your answer.
 > **Answers:** Recommend `Preemptible VMs` or `Auto-scaling managed instance groups` to handle fluctuating workloads cost-effectively.
 
-> **說明：**建議使用`可搶占式虛擬機`或`自動擴展的受控實例群組`，以應對波動性大的工作負載並控制成本。
+> **說明：** 建議使用`可搶占式虛擬機`或`自動擴展的受控實例群組`，以應對波動性大的工作負載並控制成本。
 
 7. Kamalee is looking for a VM solution for her predictable, consistent workload with an expected 2-year usage period. She's on a tight budget. Is there any way to get a discounted price? Please explain your answer.
 > **Answers:** Yes, using `Committed Use Discounts` can significantly reduce costs by committing to a one- or three-year usage plan.
