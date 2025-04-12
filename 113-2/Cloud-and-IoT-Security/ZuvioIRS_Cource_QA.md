@@ -280,7 +280,7 @@
 > - Cloud SDK (gcloud CLI): Local command-line tool.
 > - Client Libraries: Programmatic access via supported programming languages.
 
-> **說明：**
+> **說明：** </br>
 > - Cloud Console：網頁圖形介面。
 > - Cloud Shell：瀏覽器內的命令列介面。
 > - Cloud SDK（gcloud CLI）：本機指令列工具。
@@ -288,7 +288,7 @@
 2. Take a look at the GCP Cloud Shell documentation webpage and answer question 1:
    1) What are at least 3 things you can do with Cloud Shell?
    2) Based on the Lab contents, what is the Cloud Shell basically? (What is running the Cloud Shell?) And if you want to create a persistent state in Cloud Shell, what should you do?
-> **Answers:**
+> **Answers:** </br>
 > 1)
 > - Manage GCP resources with command-line tools.
 > - Edit files using an integrated code editor.
