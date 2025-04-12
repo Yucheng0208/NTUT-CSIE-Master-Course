@@ -7,7 +7,7 @@
     - [Week 6](#week-6)
     - [Week 7](#week-7)
     - [Week 8](#week-8)
-  - [Final Project](#final-project)
+  - [Final Project (Comming Soon...)](#final-project-comming-soon)
   - [Disclaimer](#disclaimer)
 
 ## MidTerm Exam
@@ -386,8 +386,9 @@
 
 > **說明：** 可以，使用 承諾使用折扣（Committed Use Discounts），承諾使用一至三年，可以大幅降低成本。
 
-## Final Project
-> Comming Soon...
+## Final Project (Comming Soon...)
+> [!NOTE]
+> Stay tuned for updates.
 
 
 ## Disclaimer
