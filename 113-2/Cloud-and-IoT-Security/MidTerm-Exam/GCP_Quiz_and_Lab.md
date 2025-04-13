@@ -11,8 +11,8 @@
     - [Prompt Engineering](#prompt-engineering)
   - [03 Essential Google Cloud Infrastructure: Foundation](#03-essential-google-cloud-infrastructure-foundation)
     - [Interacting with Google Cloud](#interacting-with-google-cloud)
-    - [Vistual Networks](#vistual-networks)
-      - [Vistual Machines](#vistual-machines)
+    - [Virtual Networks](#virtual-networks)
+      - [Virtual Machines](#virtual-machines)
   - [Disclaimer](#disclaimer)
 
 ## 02 Google Cloud Fundamentals: Core Infrastructure
@@ -128,7 +128,7 @@
 
 
 1. Which of these statements about Cloud Run functions are correct? Select three. 'Cloud Run functions:'
-**Multi Choose**
+**Multiple Select**
     - [X] Is a scalable functions-as-a-service platform.
     - [X] Is integrated with Cloud Logging.
     - [ ] Require servers or VMs to be provisioned.
@@ -205,7 +205,7 @@
     - [ ] Google Cloud Console
 > 說明：Cloud Explorer 不是用來與 GCP 互動的正式工具。
 
-### Vistual Networks
+### Virtual Networks
 
 1. Without a VPC network, you cannot create VM instances, containers, or App Engine applications.
     - [X] True
@@ -222,7 +222,7 @@
 > 說明：允許 ICMP（例如 ping）流量的防火牆規則。
 
 3. Which instances should you be able to ping from mynet-us-vm using internal IP addresses?
-**Multi Choose**
+**Multiple Select**
 - [X] mynet-notus-vm
 - [ ] managementnet-us-vm
 - [X] privatenet-us-vm
@@ -258,7 +258,7 @@
    - [ ] Three: One internal, one external and one alias IP address
 > 說明：虛擬機至少需要一個內部 IP 位址。
 
-#### Vistual Machines
+#### Virtual Machines
 
 1. What are sustained use discounts?
     - [X] Automatic discounts that you get for running specific Compute Engine resources for a significant portion of the billing month
