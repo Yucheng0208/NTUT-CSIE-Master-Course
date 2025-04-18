@@ -1,6 +1,3 @@
-// freeglut_obj_viewer: main.cpp
-// 張育丞需求：FreeGLUT 模型選擇 + 點/線/面 渲染 + 單色/隨機 + 鍵盤旋轉平移 + 自動置中縮放 + Z 軸控制 + 左下角狀態顯示
-
 #include <GL/freeglut.h>
 #include <fstream>
 #include <sstream>
