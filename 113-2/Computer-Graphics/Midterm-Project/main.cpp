@@ -13,7 +13,7 @@ struct Vertex {
 };
 
 struct Face {
-    std::vector<int> indices; // 頂點索引
+    std::vector<int> indices;
 };
 
 std::vector<Vertex> vertices;
@@ -31,7 +31,7 @@ std::string currentModelName = "None";
 void resetTransform() {
     rotX = rotY = rotZ = 0.0f;
     transX = transY = 0.0f;
-    transZ = -2.0f; // 修正：保持與 adjustViewToBoundingBox 同樣邏輯
+    transZ = -2.0f;
 }
 
 void clearModel() {
@@ -148,10 +148,13 @@ void drawHUD() {
 
     glColor3f(1.0, 1.0, 1.0);
     char buffer[100];
-    printText(10, 90, "Model: " + currentModelName);
-    sprintf(buffer, "X Angle: %.2f", rotX); printText(10, 76, buffer);
-    sprintf(buffer, "Y Angle: %.2f", rotY); printText(10, 62, buffer);
-    sprintf(buffer, "Depth: %.2f", -transZ); printText(10, 46, buffer);
+    printText(10, 110, "Model: " + currentModelName);
+    sprintf(buffer, "X Angle: %.2f", rotX); printText(10, 96, buffer);
+    sprintf(buffer, "Y Angle: %.2f", rotY); printText(10, 82, buffer);
+    sprintf(buffer, "Z Angle: %.2f", rotZ); printText(10, 68, buffer);
+    sprintf(buffer, "Depth (Z): %.2f", -transZ); printText(10, 54, buffer);
+    sprintf(buffer, "Trans X: %.2f", transX); printText(10, 40, buffer);
+    sprintf(buffer, "Trans Y: %.2f", transY); printText(10, 26, buffer);
 
     glPopMatrix();
     glMatrixMode(GL_PROJECTION);
@@ -190,8 +193,8 @@ void keyboard(unsigned char key, int x, int y) {
         case 'd': rotY += 5; break;
         case 'q': rotZ -= 5; break;
         case 'e': rotZ += 5; break;
-        case 'z': transZ += 0.2f; break;  // 向前拉近
-        case 'x': transZ -= 0.2f; break;  // 向後拉遠
+        case 'z': transZ += 0.2f; break;
+        case 'x': transZ -= 0.2f; break;
         case 'r': resetTransform(); break;
     }
     glutPostRedisplay();
@@ -218,9 +221,10 @@ void menu(int choice) {
         case 5: renderMode = 0; break;
         case 6: renderMode = 1; break;
         case 7: renderMode = 2; break;
-        case 8: useRandomColor = !useRandomColor; break;
-        case 9: clearModel(); break;
-        case 10: exit(0);
+        case 8: useRandomColor = true; break;
+        case 9: useRandomColor = false; break;
+        case 10: clearModel(); break;
+        case 11: exit(0); break;
     }
     glutPostRedisplay();
 }
@@ -238,14 +242,15 @@ void createMenu() {
     glutAddMenuEntry("Render: Face", 7);
 
     int submenuColor = glutCreateMenu(menu);
-    glutAddMenuEntry("Toggle Random Color", 8);
+    glutAddMenuEntry("Random Color", 8);
+    glutAddMenuEntry("Solid Color", 9);
 
     int mainMenu = glutCreateMenu(menu);
     glutAddSubMenu("Model", submenuModel);
     glutAddSubMenu("Render Mode", submenuRender);
     glutAddSubMenu("Color Mode", submenuColor);
-    glutAddMenuEntry("Clear Model", 9);
-    glutAddMenuEntry("Exit", 10);
+    glutAddMenuEntry("Clear Model", 10);
+    glutAddMenuEntry("Exit", 11);
 
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
