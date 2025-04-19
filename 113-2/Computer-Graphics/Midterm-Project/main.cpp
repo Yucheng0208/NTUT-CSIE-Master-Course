@@ -23,6 +23,10 @@ float rotX = 0.0f, rotY = 0.0f, rotZ = 0.0f;
 float transX = 0.0f, transY = 0.0f, transZ = -5.0f;
 float autoScale = 1.0f;
 
+// 任意軸旋轉控制
+float customAxisX = 0.0f, customAxisY = 0.0f, customAxisZ = 1.0f;
+float customAngle = 0.0f;
+
 int renderMode = 2; // 0: points, 1: lines, 2: faces
 bool useRandomColor = false;
 bool hasModel = false;
@@ -32,6 +36,10 @@ void resetTransform() {
     rotX = rotY = rotZ = 0.0f;
     transX = transY = 0.0f;
     transZ = -2.0f;
+    customAxisX = 0.0f;
+    customAxisY = 0.0f;
+    customAxisZ = 1.0f;
+    customAngle = 0.0f;
 }
 
 void clearModel() {
@@ -81,7 +89,7 @@ bool loadOBJ(const std::string& path) {
         std::string type;
         iss >> type;
         if (type == "v") {
-            Vertex v;
+            Vertex v{};
             iss >> v.x >> v.y >> v.z;
             vertices.push_back(v);
         } else if (type == "f") {
@@ -155,6 +163,8 @@ void drawHUD() {
     sprintf(buffer, "Depth (Z): %.2f", -transZ); printText(10, 54, buffer);
     sprintf(buffer, "Trans X: %.2f", transX); printText(10, 40, buffer);
     sprintf(buffer, "Trans Y: %.2f", transY); printText(10, 26, buffer);
+    sprintf(buffer, "Custom Axis: (%.1f, %.1f, %.1f)", customAxisX, customAxisY, customAxisZ); printText(10, 12, buffer);
+    sprintf(buffer, "Custom Angle: %.1f", customAngle); printText(10, -2, buffer);
 
     glPopMatrix();
     glMatrixMode(GL_PROJECTION);
@@ -170,6 +180,7 @@ void display() {
     glRotatef(rotX, 1.0f, 0.0f, 0.0f);
     glRotatef(rotY, 0.0f, 1.0f, 0.0f);
     glRotatef(rotZ, 0.0f, 0.0f, 1.0f);
+    glRotatef(customAngle, customAxisX, customAxisY, customAxisZ);
     glScalef(autoScale, autoScale, autoScale);
 
     drawModel();
@@ -196,6 +207,13 @@ void keyboard(unsigned char key, int x, int y) {
         case 'z': transZ += 0.2f; break;
         case 'x': transZ -= 0.2f; break;
         case 'r': resetTransform(); break;
+
+        case 'u': customAxisX += 0.1f; break;
+        case 'i': customAxisY += 0.1f; break;
+        case 'o': customAxisZ += 0.1f; break;
+        case 'j': customAngle -= 5.0f; break;
+        case 'l': customAngle += 5.0f; break;
+        case 'k': customAxisX = 0.0f; customAxisY = 0.0f; customAxisZ = 1.0f; customAngle = 0.0f; break;
     }
     glutPostRedisplay();
 }
