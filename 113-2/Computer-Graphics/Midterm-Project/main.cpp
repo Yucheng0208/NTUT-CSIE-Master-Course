@@ -6,6 +6,9 @@
 #include <cmath>
 #include <ctime>
 #include <algorithm>
+#include <iostream>
+
+using namespace std;
 
 // 結構定義
 struct Vertex {
@@ -13,11 +16,11 @@ struct Vertex {
 };
 
 struct Face {
-    std::vector<int> indices;
+    vector<int> indices;
 };
 
-std::vector<Vertex> vertices;
-std::vector<Face> faces;
+vector<Vertex> vertices;
+vector<Face> faces;
 
 // 模型操作變數
 float rotX = 0.0f, rotY = 0.0f, rotZ = 0.0f;
@@ -39,7 +42,8 @@ float centerX = 0.0f, centerY = 0.0f, centerZ = 0.0f;
 int renderMode = 2;
 bool useRandomColor = false;
 bool hasModel = false;
-std::string currentModelName = "None";
+
+string currentModelName = "None";
 
 void resetTransform() {
     rotX = rotY = rotZ = 0.0f;
@@ -70,9 +74,9 @@ void adjustViewToBoundingBox() {
     float minZ = vertices[0].z, maxZ = vertices[0].z;
 
     for (const auto& v : vertices) {
-        minX = std::min(minX, v.x); maxX = std::max(maxX, v.x);
-        minY = std::min(minY, v.y); maxY = std::max(maxY, v.y);
-        minZ = std::min(minZ, v.z); maxZ = std::max(maxZ, v.z);
+        minX = min(minX, v.x); maxX = max(maxX, v.x);
+        minY = min(minY, v.y); maxY = max(maxY, v.y);
+        minZ = min(minZ, v.z); maxZ = max(maxZ, v.z);
     }
 
     centerX = (minX + maxX) / 2;
@@ -85,20 +89,20 @@ void adjustViewToBoundingBox() {
         v.z -= centerZ;
     }
 
-    float maxDim = std::max({ maxX - minX, maxY - minY, maxZ - minZ });
+    float maxDim = max({ maxX - minX, maxY - minY, maxZ - minZ });
     autoScale = 1.4f / maxDim;
     transZ = -2.0f;
 }
 
-bool loadOBJ(const std::string& path) {
+bool loadOBJ(const string& path) {
     clearModel();
-    std::ifstream file(path);
+    ifstream file(path);
     if (!file.is_open()) return false;
 
-    std::string line;
-    while (std::getline(file, line)) {
-        std::istringstream iss(line);
-        std::string type;
+    string line;
+    while (getline(file, line)) {
+        istringstream iss(line);
+        string type;
         iss >> type;
         if (type == "v") {
             Vertex v{};
@@ -119,7 +123,7 @@ bool loadOBJ(const std::string& path) {
     return true;
 }
 
-void printText(float x, float y, const std::string& text) {
+void printText(float x, float y, const string& text) {
     glRasterPos2f(x, y);
     for (char c : text) {
         glutBitmapCharacter(GLUT_BITMAP_8_BY_13, c);
@@ -169,10 +173,10 @@ void drawHUD() {
     glColor3f(1.0, 1.0, 1.0);
     char buffer[200];
 
-    // 👉 顯示控制模式在左上角
+
     printText(10, 580, useCameraMode ? "操作模式：攝影機 Camera Mode" : "操作模式：模型 Model Mode");
 
-    // 👉 以下資訊顯示於左下角
+
     int baseY = 170;
     printText(10, baseY, "Model: " + currentModelName);
     sprintf(buffer, "X Angle: %.2f", rotX); printText(10, baseY - 14, buffer);
@@ -290,14 +294,7 @@ void arrowKeys(int key, int x, int y) {
 
 void menu(int choice) {
     switch (choice) {
-        case 1:  // Teapot
-            loadOBJ("models/teapot.obj");
-            currentModelName = "Teapot";
-            camRadius = 8.0f;       // 拉遠一點
-            camYaw = 0.0f;          // 保持正前方
-            camPitch = -0.3f;       // 👈 向下看一點
-            transZ = -2.0f;         // 保持模型模式也能看
-            break;
+        case 1: loadOBJ("models/teapot.obj"); currentModelName = "Teapot";  break;
         case 2: loadOBJ("models/teddy.obj"); currentModelName = "Teddy"; break;
         case 3: loadOBJ("models/gourd.obj"); currentModelName = "Gourd"; break;
         case 4: loadOBJ("models/octahedron.obj"); currentModelName = "Octahedron"; break;
