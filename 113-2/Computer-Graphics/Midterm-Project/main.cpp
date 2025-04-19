@@ -19,6 +19,7 @@ struct Face {
 std::vector<Vertex> vertices;
 std::vector<Face> faces;
 
+// 模型操作變數
 float rotX = 0.0f, rotY = 0.0f, rotZ = 0.0f;
 float transX = 0.0f, transY = 0.0f, transZ = -5.0f;
 float autoScale = 1.0f;
@@ -27,7 +28,15 @@ float autoScale = 1.0f;
 float customAxisX = 0.0f, customAxisY = 0.0f, customAxisZ = 1.0f;
 float customAngle = 0.0f;
 
-int renderMode = 2; // 0: points, 1: lines, 2: faces
+// 攝影機操作變數
+bool useCameraMode = false;
+float camRadius = 5.0f;
+float camYaw = 0.0f;
+float camPitch = 0.0f;
+float centerX = 0.0f, centerY = 0.0f, centerZ = 0.0f;
+
+// 其他狀態
+int renderMode = 2;
 bool useRandomColor = false;
 bool hasModel = false;
 std::string currentModelName = "None";
@@ -40,6 +49,9 @@ void resetTransform() {
     customAxisY = 0.0f;
     customAxisZ = 1.0f;
     customAngle = 0.0f;
+    camYaw = 0.0f;
+    camPitch = 0.0f;
+    camRadius = 5.0f;
 }
 
 void clearModel() {
@@ -63,9 +75,9 @@ void adjustViewToBoundingBox() {
         minZ = std::min(minZ, v.z); maxZ = std::max(maxZ, v.z);
     }
 
-    float centerX = (minX + maxX) / 2;
-    float centerY = (minY + maxY) / 2;
-    float centerZ = (minZ + maxZ) / 2;
+    centerX = (minX + maxX) / 2;
+    centerY = (minY + maxY) / 2;
+    centerZ = (minZ + maxZ) / 2;
 
     for (auto& v : vertices) {
         v.x -= centerX;
@@ -155,16 +167,31 @@ void drawHUD() {
     glLoadIdentity();
 
     glColor3f(1.0, 1.0, 1.0);
-    char buffer[100];
-    printText(10, 110, "Model: " + currentModelName);
-    sprintf(buffer, "X Angle: %.2f", rotX); printText(10, 96, buffer);
-    sprintf(buffer, "Y Angle: %.2f", rotY); printText(10, 82, buffer);
-    sprintf(buffer, "Z Angle: %.2f", rotZ); printText(10, 68, buffer);
-    sprintf(buffer, "Depth (Z): %.2f", -transZ); printText(10, 54, buffer);
-    sprintf(buffer, "Trans X: %.2f", transX); printText(10, 40, buffer);
-    sprintf(buffer, "Trans Y: %.2f", transY); printText(10, 26, buffer);
-    sprintf(buffer, "Custom Axis: (%.1f, %.1f, %.1f)", customAxisX, customAxisY, customAxisZ); printText(10, 12, buffer);
-    sprintf(buffer, "Custom Angle: %.1f", customAngle); printText(10, -2, buffer);
+    char buffer[200];
+
+    // 👉 顯示控制模式在左上角
+    printText(10, 580, useCameraMode ? "操作模式：攝影機 Camera Mode" : "操作模式：模型 Model Mode");
+
+    // 👉 以下資訊顯示於左下角
+    int baseY = 170;
+    printText(10, baseY, "Model: " + currentModelName);
+    sprintf(buffer, "X Angle: %.2f", rotX); printText(10, baseY - 14, buffer);
+    sprintf(buffer, "Y Angle: %.2f", rotY); printText(10, baseY - 28, buffer);
+    sprintf(buffer, "Z Angle: %.2f", rotZ); printText(10, baseY - 42, buffer);
+    sprintf(buffer, "Depth (Z): %.2f", -transZ); printText(10, baseY - 56, buffer);
+    sprintf(buffer, "Trans X: %.2f", transX); printText(10, baseY - 70, buffer);
+    sprintf(buffer, "Trans Y: %.2f", transY); printText(10, baseY - 84, buffer);
+    sprintf(buffer, "Custom Axis: (%.1f, %.1f, %.1f)", customAxisX, customAxisY, customAxisZ); printText(10, baseY - 98, buffer);
+    sprintf(buffer, "Custom Angle: %.1f", customAngle); printText(10, baseY - 112, buffer);
+
+    if (useCameraMode) {
+        float eyeX = centerX + camRadius * sin(camYaw) * cos(camPitch);
+        float eyeY = centerY + camRadius * sin(camPitch);
+        float eyeZ = centerZ + camRadius * cos(camYaw) * cos(camPitch);
+        sprintf(buffer, "Eye: (%.2f, %.2f, %.2f)", eyeX, eyeY, eyeZ); printText(10, baseY - 126, buffer);
+        sprintf(buffer, "Center: (%.2f, %.2f, %.2f)", centerX, centerY, centerZ); printText(10, baseY - 140, buffer);
+        sprintf(buffer, "Radius: %.2f  Yaw: %.2f  Pitch: %.2f", camRadius, camYaw, camPitch); printText(10, baseY - 154, buffer);
+    }
 
     glPopMatrix();
     glMatrixMode(GL_PROJECTION);
@@ -176,13 +203,20 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
-    glTranslatef(transX, transY, transZ);
-    glRotatef(rotX, 1.0f, 0.0f, 0.0f);
-    glRotatef(rotY, 0.0f, 1.0f, 0.0f);
-    glRotatef(rotZ, 0.0f, 0.0f, 1.0f);
-    glRotatef(customAngle, customAxisX, customAxisY, customAxisZ);
-    glScalef(autoScale, autoScale, autoScale);
+    if (useCameraMode) {
+        float eyeX = centerX + camRadius * sin(camYaw) * cos(camPitch);
+        float eyeY = centerY + camRadius * sin(camPitch);
+        float eyeZ = centerZ + camRadius * cos(camYaw) * cos(camPitch);
+        gluLookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, 0.0f, 1.0f, 0.0f);
+    } else {
+        glTranslatef(transX, transY, transZ);
+        glRotatef(rotX, 1.0f, 0.0f, 0.0f);
+        glRotatef(rotY, 0.0f, 1.0f, 0.0f);
+        glRotatef(rotZ, 0.0f, 0.0f, 1.0f);
+        glRotatef(customAngle, customAxisX, customAxisY, customAxisZ);
+    }
 
+    glScalef(autoScale, autoScale, autoScale);
     drawModel();
     drawHUD();
     glutSwapBuffers();
@@ -196,43 +230,74 @@ void reshape(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-void keyboard(unsigned char key, int x, int y) {
-    switch (key) {
-        case 'w': rotX -= 5; break;
-        case 's': rotX += 5; break;
-        case 'a': rotY -= 5; break;
-        case 'd': rotY += 5; break;
-        case 'q': rotZ -= 5; break;
-        case 'e': rotZ += 5; break;
-        case 'z': transZ += 0.2f; break;
-        case 'x': transZ -= 0.2f; break;
-        case 'r': resetTransform(); break;
+void resetCamera() {
+    camRadius = 5.0f;
+    camYaw = 0.0f;
+    camPitch = 0.0f;
+}
 
-        case 'u': customAxisX += 0.1f; break;
-        case 'i': customAxisY += 0.1f; break;
-        case 'o': customAxisZ += 0.1f; break;
-        case 'j': customAngle -= 5.0f; break;
-        case 'l': customAngle += 5.0f; break;
-        case 'k': customAxisX = 0.0f; customAxisY = 0.0f; customAxisZ = 1.0f; customAngle = 0.0f; break;
+void keyboard(unsigned char key, int x, int y) {
+    if (useCameraMode) {
+        switch (key) {
+            case 'w': camRadius -= 0.2f; break;
+            case 's': camRadius += 0.2f; break;
+            case 'a': camYaw -= 0.05f; break;
+            case 'd': camYaw += 0.05f; break;
+            case 'q': camPitch += 0.05f; break;
+            case 'e': camPitch -= 0.05f; break;
+            case 'c': resetCamera(); break;
+        }
+    } else {
+        switch (key) {
+            case 'w': rotX -= 5; break;
+            case 's': rotX += 5; break;
+            case 'a': rotY -= 5; break;
+            case 'd': rotY += 5; break;
+            case 'q': rotZ -= 5; break;
+            case 'e': rotZ += 5; break;
+            case 'z': transZ += 0.2f; break;
+            case 'x': transZ -= 0.2f; break;
+            case 'r': resetTransform(); break;
+            case 'u': customAxisX += 0.1f; break;
+            case 'i': customAxisY += 0.1f; break;
+            case 'o': customAxisZ += 0.1f; break;
+            case 'j': customAngle -= 5.0f; break;
+            case 'l': customAngle += 5.0f; break;
+            case 'k': customAxisX = 0.0f; customAxisY = 0.0f; customAxisZ = 1.0f; customAngle = 0.0f; break;
+        }
     }
+
+    if (key == 'm') {
+        useCameraMode = !useCameraMode;
+    }
+
     glutPostRedisplay();
 }
 
 void arrowKeys(int key, int x, int y) {
-    switch (key) {
-        case GLUT_KEY_LEFT:  transX -= 0.2f; break;
-        case GLUT_KEY_RIGHT: transX += 0.2f; break;
-        case GLUT_KEY_UP:    transY += 0.2f; break;
-        case GLUT_KEY_DOWN:  transY -= 0.2f; break;
-        case GLUT_KEY_PAGE_UP:   transZ += 0.2f; break;
-        case GLUT_KEY_PAGE_DOWN: transZ -= 0.2f; break;
+    if (!useCameraMode) {
+        switch (key) {
+            case GLUT_KEY_LEFT:  transX -= 0.2f; break;
+            case GLUT_KEY_RIGHT: transX += 0.2f; break;
+            case GLUT_KEY_UP:    transY += 0.2f; break;
+            case GLUT_KEY_DOWN:  transY -= 0.2f; break;
+            case GLUT_KEY_PAGE_UP:   transZ += 0.2f; break;
+            case GLUT_KEY_PAGE_DOWN: transZ -= 0.2f; break;
+        }
+        glutPostRedisplay();
     }
-    glutPostRedisplay();
 }
 
 void menu(int choice) {
     switch (choice) {
-        case 1: loadOBJ("models/teapot.obj"); currentModelName = "Teapot"; break;
+        case 1:  // Teapot
+            loadOBJ("models/teapot.obj");
+            currentModelName = "Teapot";
+            camRadius = 8.0f;       // 拉遠一點
+            camYaw = 0.0f;          // 保持正前方
+            camPitch = -0.3f;       // 👈 向下看一點
+            transZ = -2.0f;         // 保持模型模式也能看
+            break;
         case 2: loadOBJ("models/teddy.obj"); currentModelName = "Teddy"; break;
         case 3: loadOBJ("models/gourd.obj"); currentModelName = "Gourd"; break;
         case 4: loadOBJ("models/octahedron.obj"); currentModelName = "Octahedron"; break;
