@@ -305,6 +305,7 @@ void menu(int choice) {
         case 9: useRandomColor = false; break;
         case 10: clearModel(); break;
         case 11: exit(0); break;
+
     }
     glutPostRedisplay();
 }
