@@ -174,7 +174,7 @@ void drawHUD() {
     char buffer[200];
 
 
-    printText(10, 580, useCameraMode ? "操作模式：攝影機 Camera Mode" : "操作模式：模型 Model Mode");
+    printText(10, 580, useCameraMode ? "Camera Mode" : "Model Mode");
 
 
     int baseY = 170;
