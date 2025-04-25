@@ -174,7 +174,7 @@ void drawHUD() {
     char buffer[200];
 
 
-    printText(10, 580, useCameraMode ? "Camera Mode" : "Model Mode");
+    //printText(10, 580, useCameraMode ? "Camera Mode" : "Model Mode");
 
 
     int baseY = 170;
@@ -241,8 +241,9 @@ void resetCamera() {
 }
 
 void keyboard(unsigned char key, int x, int y) {
-    if (useCameraMode) {
+   /* if (useCameraMode) {
         switch (key) {
+
             case 'w': camRadius -= 0.2f; break;
             case 's': camRadius += 0.2f; break;
             case 'a': camYaw -= 0.05f; break;
@@ -251,7 +252,8 @@ void keyboard(unsigned char key, int x, int y) {
             case 'e': camPitch -= 0.05f; break;
             case 'c': resetCamera(); break;
         }
-    } else {
+
+    } else {*/
         switch (key) {
             case 'w': rotX -= 5; break;
             case 's': rotX += 5; break;
@@ -269,11 +271,12 @@ void keyboard(unsigned char key, int x, int y) {
             case 'l': customAngle += 5.0f; break;
             case 'k': customAxisX = 0.0f; customAxisY = 0.0f; customAxisZ = 1.0f; customAngle = 0.0f; break;
         }
-    }
+
+    /*}
 
     if (key == 'm') {
         useCameraMode = !useCameraMode;
-    }
+    }*/
 
     glutPostRedisplay();
 }
