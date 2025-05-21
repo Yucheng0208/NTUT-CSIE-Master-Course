@@ -55,7 +55,7 @@ void drawGrid() {
 
     glColor3f(1.0f, 0.0f, 0.0f);
     glVertex2f(-gridSize, 0);
-    glVertex2f(gridSize, 0);
+    glVertex2f(gridSize + 1, 0);
 
     glColor3f(0.0f, 1.0f, 0.0f);
     glVertex2f(0, -gridSize);
