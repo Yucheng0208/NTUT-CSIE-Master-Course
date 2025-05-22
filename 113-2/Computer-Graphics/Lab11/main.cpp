@@ -78,11 +78,6 @@ bool LoadGLTexture(const std::string& szFileName, GLuint texID) {
         internal_gl_format = GL_RGBA; // Store as RGBA
     } else if (image.channels() == 1) {
         std::cout << "Image has 1 channel. Assuming Grayscale." << std::endl;
-        // No conversion needed if using GL_LUMINANCE.
-        // If you want to force it to RGB (e.g. R=G=B=GrayVal):
-        // cv::cvtColor(image, image, cv::COLOR_GRAY2RGB);
-        // input_pixel_format = GL_RGB;
-        // internal_gl_format = GL_RGB;
         input_pixel_format = GL_LUMINANCE;
         internal_gl_format = GL_LUMINANCE; // Store as Luminance
     } else {
@@ -259,27 +254,22 @@ void SetupRC() {
               << textures[0] << ", " << textures[1] << ", "
               << textures[2] << ", " << textures[3] << std::endl;
 
-    // Initialize texture IDs to 0 to indicate failure more clearly if LoadGLTexture fails before assignment
-    // This is redundant if LoadGLTexture is robustly checked, but can be a safeguard.
-    // for(int i=0; i<4; ++i) textures[i] = 0; /* Actually, glGenTextures populates them. */
-    // A better check is that if LoadGLTexture fails, we handle it (e.g. by not using that ID)
-
     // Load textures
     // IMPORTANT: Ensure these image files are in the same directory as your executable,
     // or provide the correct full/relative path.
-    if (!LoadGLTexture("floor.jpg", textures[0])) {
+    if (!LoadGLTexture("../floor.jpg", textures[0])) {
         std::cerr << "CRITICAL FAILURE: floor.jpg could not be loaded. Exiting." << std::endl;
         exit(1);
     }
-    if (!LoadGLTexture("Block4.jpg", textures[1])) {
+    if (!LoadGLTexture("../Block4.jpg", textures[1])) {
         std::cerr << "CRITICAL FAILURE: Block4.jpg could not be loaded. Exiting." << std::endl;
         exit(1);
     }
-    if (!LoadGLTexture("Block5.jpg", textures[2])) {
+    if (!LoadGLTexture("../Block5.jpg", textures[2])) {
         std::cerr << "CRITICAL FAILURE: Block5.jpg could not be loaded. Exiting." << std::endl;
         exit(1);
     }
-    if (!LoadGLTexture("Block6.jpg", textures[3])) {
+    if (!LoadGLTexture("../Block6.jpg", textures[3])) {
         std::cerr << "CRITICAL FAILURE: Block6.jpg could not be loaded. Exiting." << std::endl;
         exit(1);
     }
@@ -295,29 +285,48 @@ void SetupRC() {
 }
 
 void ChangeSize(int w, int h) {
-    if (h == 0) h = 1;
+    if (h == 0) h = 1; // Prevent division by zero
     glViewport(0, 0, w, h);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    GLfloat windowWidth = 100.f;
-    GLfloat windowHeight = 100.f;
-    glOrtho(-100.0f, windowWidth, -100.0f, windowHeight, -200.0f, 200.0f);
+    // Adjust orthographic projection to maintain aspect ratio
+    GLfloat fAspect = (GLfloat)w / (GLfloat)h;
+    GLfloat sceneHalfWidth = 100.0f;  // Desired half-width of the scene's visible area
+    GLfloat sceneHalfHeight = 100.0f; // Desired half-height of the scene's visible area
+
+    if (w <= h) { // Window is taller or square
+        // Viewport width is a constraint, adjust ortho height
+        glOrtho(-sceneHalfWidth, sceneHalfWidth,
+                -sceneHalfHeight / fAspect, sceneHalfHeight / fAspect,
+                -200.0f, 200.0f);
+    } else { // Window is wider
+        // Viewport height is a constraint, adjust ortho width
+        glOrtho(-sceneHalfWidth * fAspect, sceneHalfWidth * fAspect,
+                -sceneHalfHeight, sceneHalfHeight,
+                -200.0f, 200.0f);
+    }
+    // Note: The above logic maintains a constant view height if window is wider,
+    // and constant view width if window is taller.
+    // If you always want to see -100 to 100 in Y and expand X, the logic would be:
+    // glOrtho(-100.0f * fAspect, 100.0f * fAspect, -100.0f, 100.0f, -200.0f, 200.0f);
+    // The chosen implementation ensures that a 200x200 world area isn't stretched.
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glLightfv(GL_LIGHT0, GL_POSITION, vLightPos);
-    glRotatef(30.0f, 1.0f, 0.0f, 0.0f);
-    glRotatef(330.0f, 0.0f, 1.0f, 0.0f);
+    // Apply view transformations
+    glLightfv(GL_LIGHT0, GL_POSITION, vLightPos); // Position light relative to view
+    glRotatef(30.0f, 1.0f, 0.0f, 0.0f);          // Rotate view
+    glRotatef(330.0f, 0.0f, 1.0f, 0.0f);         // Rotate view
 }
 
 int main(int argc, char* argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
     glutInitWindowSize(800, 600);
-    glutCreateWindow("OpenCV 4 Textures (macOS - Debugged)");
+    glutCreateWindow("OpenCV 4 Textures (Corrected Aspect Ratio)");
 
     std::cout << "OpenGL Vendor: " << glGetString(GL_VENDOR) << std::endl;
     std::cout << "OpenGL Renderer: " << glGetString(GL_RENDERER) << std::endl;
@@ -334,7 +343,6 @@ int main(int argc, char* argv[]) {
     glutMainLoop();
 
     // This part is usually not reached as glutMainLoop doesn't return by default
-    // and ESC key calls exit(0) directly.
-    // glDeleteTextures(4, textures);
+    // and ESC key calls exit(0) directly, where textures are already deleted.
     return 0;
 }
