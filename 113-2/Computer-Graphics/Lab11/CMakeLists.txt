@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(OpenCVTexture)
+project(Lab11)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -25,13 +25,13 @@ find_package(OpenCV REQUIRED)
 # 🔥 這行很重要
 add_definitions(-DSOURCE_DIR="${CMAKE_SOURCE_DIR}")
 
-add_executable(OpenCVTexture main.cpp)
+add_executable(Lab11 main.cpp)
 
 if(OpenCV_FOUND)
-    target_include_directories(OpenCVTexture PRIVATE ${OpenCV_INCLUDE_DIRS})
+    target_include_directories(Lab11 PRIVATE ${OpenCV_INCLUDE_DIRS})
 endif()
 
-target_link_libraries(OpenCVTexture PRIVATE
+target_link_libraries(Lab11 PRIVATE
         ${OpenCV_LIBRARIES}
         "-framework OpenGL"
         "-framework GLUT"
