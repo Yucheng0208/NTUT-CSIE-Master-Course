@@ -37,7 +37,7 @@ The repository includes resources for the following courses:
 2. Navigate to the desired course folder to access materials.
 
 > [!CAUTION]  
-> The course materials, including assignments, are protected under the [MIT License](./LICENSE). However, the lecture slides and teaching presentations are the intellectual property of the respective instructors. If you want to use these materials, please follow the proper citation guidelines and make sure you do not infringe upon others' copyrights.
+> The course materials, including assignments, are protected under the [MIT License](LICENSE). However, the lecture slides and teaching presentations are the intellectual property of the respective instructors. If you want to use these materials, please follow the proper citation guidelines and make sure you do not infringe upon others' copyrights.
 
 ## License
-This project is licensed under the [MIT License](./LICENSE).
+This project is licensed under the [MIT License](LICENSE).
