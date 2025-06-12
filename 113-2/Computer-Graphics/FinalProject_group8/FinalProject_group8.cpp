@@ -7,6 +7,9 @@
 //
 // Added a sun sphere to represent the light source.
 // Added keyboard controls (1, 2, 3) to move the sun (East, Noon, West).
+// Modified the sun to be a textured sphere using sun.tga.
+// Corrected sun texture color by using GL_REPLACE texture environment.
+// Added W/S for camera pitch and R to reset the scene.
 
 // Disable fopen security warning on MSVC
 #define _CRT_SECURE_NO_WARNINGS
@@ -201,6 +204,31 @@ public:
         newVect[1] = rotMat[1] * vForward[0] + rotMat[5] * vForward[1] + rotMat[9] * vForward[2];
         newVect[2] = rotMat[2] * vForward[0] + rotMat[6] * vForward[1] + rotMat[10] * vForward[2];
         m3dCopyVector3(vForward, newVect);
+    }
+
+    // <--- 新增：RotateLocalX 方法，用於攝影機抬頭/低頭 --->
+    void RotateLocalX(float fAngle) {
+        M3DMatrix44f rotMat;
+        M3DVector3f vCross;
+
+        // 取得本地 X 軸
+        m3dCrossProduct(vCross, vUp, vForward);
+
+        // 建立旋轉矩陣
+        m3dRotationMatrix44(rotMat, fAngle, vCross[0], vCross[1], vCross[2]);
+
+        // 旋轉 Forward 向量
+        M3DVector3f newVect;
+        newVect[0] = rotMat[0] * vForward[0] + rotMat[4] * vForward[1] + rotMat[8] * vForward[2];
+        newVect[1] = rotMat[1] * vForward[0] + rotMat[5] * vForward[1] + rotMat[9] * vForward[2];
+        newVect[2] = rotMat[2] * vForward[0] + rotMat[6] * vForward[1] + rotMat[10] * vForward[2];
+        m3dCopyVector3(vForward, newVect);
+
+        // 旋轉 Up 向量
+        newVect[0] = rotMat[0] * vUp[0] + rotMat[4] * vUp[1] + rotMat[8] * vUp[2];
+        newVect[1] = rotMat[1] * vUp[0] + rotMat[5] * vUp[1] + rotMat[9] * vUp[2];
+        newVect[2] = rotMat[2] * vUp[0] + rotMat[6] * vUp[1] + rotMat[10] * vUp[2];
+        m3dCopyVector3(vUp, newVect);
     }
 };
 
@@ -455,12 +483,8 @@ bool LoadOBJ(const char* filename, OBJModel& model) {
                 vertexIndices.push_back(vIdx[3]); uvIndices.push_back(vtIdx[3]); normalIndices.push_back(vnIdx[3]);
             }
         }
-        // Ignore other types like mtllib, usemtl, o, g, s for this basic example
     }
 
-    // After parsing all lines, build the final interleaved data and indices
-    // This part is crucial for making the data compatible with glDrawElements
-    // We create a unique vertex for each unique combination of (v, vt, vn)
     map<tuple<GLuint, GLuint, GLuint>, GLuint> uniqueVertexMap;
     GLuint current_index = 0;
 
@@ -469,7 +493,6 @@ bool LoadOBJ(const char* filename, OBJModel& model) {
         GLuint uvIndex = uvIndices[i];
         GLuint normalIndex = normalIndices[i];
 
-        // OBJ indices are 1-based, convert to 0-based for temp arrays
         vIndex--;
         if (uvIndex > 0) uvIndex--;
         if (normalIndex > 0) normalIndex--;
@@ -477,49 +500,32 @@ bool LoadOBJ(const char* filename, OBJModel& model) {
         tuple<GLuint, GLuint, GLuint> key = make_tuple(vIndex, uvIndex, normalIndex);
 
         if (uniqueVertexMap.find(key) == uniqueVertexMap.end()) {
-            // New unique vertex combination
             uniqueVertexMap[key] = current_index;
             model.indices.push_back(current_index);
-
-            // Add vertex position
             model.vertices.push_back(model.temp_vertices[vIndex * 3]);
             model.vertices.push_back(model.temp_vertices[vIndex * 3 + 1]);
             model.vertices.push_back(model.temp_vertices[vIndex * 3 + 2]);
-
-            // Add texture coordinate if available
             if (uvIndex < model.temp_texCoords.size() / 2) {
                 model.texCoords.push_back(model.temp_texCoords[uvIndex * 2]);
                 model.texCoords.push_back(model.temp_texCoords[uvIndex * 2 + 1]);
-            }
-            else { // Placeholder if no texture coordinate
+            } else {
                 model.texCoords.push_back(0.0f); model.texCoords.push_back(0.0f);
             }
-
-            // Add normal if available
             if (normalIndex < model.temp_normals.size() / 3) {
                 model.normals.push_back(model.temp_normals[normalIndex * 3]);
                 model.normals.push_back(model.temp_normals[normalIndex * 3 + 1]);
                 model.normals.push_back(model.temp_normals[normalIndex * 3 + 2]);
-            }
-            else { // Placeholder if no normal
+            } else {
                 model.normals.push_back(0.0f); model.normals.push_back(1.0f); model.normals.push_back(0.0f);
             }
             current_index++;
-        }
-        else {
-            // Already seen this combination, just add its index
+        } else {
             model.indices.push_back(uniqueVertexMap[key]);
         }
     }
-
-    // Clear temporary data after building final arrays
     model.temp_vertices.clear();
     model.temp_normals.clear();
     model.temp_texCoords.clear();
-
-    cout << "Loaded " << model.vertices.size() / 3 << " unique vertices and "
-        << model.indices.size() / 3 << " faces from " << filename << endl;
-    cout << "Normals count: " << model.normals.size() / 3 << ", TexCoords count: " << model.texCoords.size() / 2 << endl;
     return true;
 }
 // --- End OBJ Loader Definitions ---
@@ -528,29 +534,26 @@ bool LoadOBJ(const char* filename, OBJModel& model) {
 // Main Application Globals
 GLFrame frameCamera;
 
-// <--- 修改：設定光源初始位置為「日正當中」--->
 GLfloat fLightPos[4] = { 0.0f, 100.0f, 0.0f, 1.0f }; // Noon
 GLfloat fNoLight[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 GLfloat fLowLight[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 GLfloat fBrightLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 M3DMatrix44f mShadowMatrix;
-
-// <--- 新增：全域變數來儲存地平面方程式，以便在鍵盤回呼函式中重新計算陰影 --->
 M3DVector4f g_pPlane;
 
 #define GROUND_TEXTURE       0
 #define DINING_TABLE_TEXTURE 1
-#define BUSH_OBJ_TEXTURE    2 // This will now point to bush.tga
-#define POTTED_PLANT_TEXTURE 3 // This will now point to pottedPlant.tga
-#define NUM_TEXTURES         4
+#define BUSH_OBJ_TEXTURE     2
+#define POTTED_PLANT_TEXTURE 3
+#define SUN_TEXTURE          4
+#define NUM_TEXTURES         5
 GLuint  textureObjects[NUM_TEXTURES];
 
-const char* szTextureFiles[] = { "TGA/blackandwhiteTiles.tga", "TGA/wood.tga", "TGA/bush.tga", "TGA/pottedPlant.tga" };
-// IMPORTANT: Ensure you have 'black&whiteTiles.tga', 'wood.tga', 'bush.tga', and 'pottedPlant.tga'
-// in your 'TGA' folder.
+const char* szTextureFiles[] = { "TGA/blackandwhiteTiles.tga", "TGA/wood.tga", "TGA/bush.tga", "TGA/pottedPlant.tga", "TGA/sun.tga" };
 
 bool isPaused = false;
+GLfloat yRot = 0.0f; // <--- 修改：將 yRot 改為全域變數以便重置
 
 // Global OBJ models
 OBJModel diningTable_obj;
@@ -565,8 +568,6 @@ void DrawSun(void);
 
 
 void SetupRC() {
-    // These points define the plane for the shadow matrix.
-    // They are on the Y=-0.4f plane (our ground).
     M3DVector3f vPoints[3] = { { 0.0f, -0.4f, 0.0f },
                                { 10.0f, -0.4f, 0.0f },
                                { 5.0f, -0.4f, -5.0f } };
@@ -590,9 +591,7 @@ void SetupRC() {
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 
-    // <--- 修改：計算地平面方程式並儲存到全域變數 g_pPlane --->
     m3dGetPlaneEquation(g_pPlane, vPoints[0], vPoints[1], vPoints[2]);
-    // <--- 修改：使用初始光源位置計算初始的陰影矩陣 --->
     m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
 
     glEnable(GL_COLOR_MATERIAL);
@@ -723,22 +722,32 @@ void DrawOBJModel(const OBJModel& model, GLuint textureID, GLint nShadow) {
 
 void DrawSun(void) {
     glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
-
-    glColor3f(1.0f, 1.0f, 0.0f);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureObjects[SUN_TEXTURE]);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
     glPushMatrix();
         glTranslatef(fLightPos[0], fLightPos[1], fLightPos[2]);
-        glutSolidSphere(5.0f, 20, 20); // 縮小太陽的視覺大小
+        static GLUquadric *pSun = NULL;
+        if(pSun == NULL) {
+            pSun = gluNewQuadric();
+            gluQuadricDrawStyle(pSun, GLU_FILL);
+            gluQuadricNormals(pSun, GLU_SMOOTH);
+            gluQuadricTexture(pSun, GL_TRUE);
+        }
+        glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
+        glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+        gluSphere(pSun, 5.0f, 30, 30);
     glPopMatrix();
 
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glEnable(GL_LIGHTING);
-    glEnable(GL_TEXTURE_2D);
 }
 
 
 void DrawInhabitants(GLint nShadow) {
-    static GLfloat yRot = 0.0f;
+    // <--- 修改：不再使用 static，yRot 現在是全域變數 --->
     static float orbitSpeed = 1.0f;
 
     if (!isPaused) {
@@ -782,13 +791,10 @@ void RenderScene(void) {
     glPushMatrix();
     frameCamera.ApplyCameraTransform();
     glLightfv(GL_LIGHT0, GL_POSITION, fLightPos);
-
     DrawSun();
-
     glColor3f(1.0f, 1.0f, 1.0f);
     DrawGround();
 
-    // Draw shadows
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
@@ -802,11 +808,9 @@ void RenderScene(void) {
     glDisable(GL_STENCIL_TEST);
     glDisable(GL_BLEND);
 
-    // Draw real objects
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
-
     DrawInhabitants(0);
 
     glPopMatrix();
@@ -821,37 +825,58 @@ void SpecialKeys(int key, int x, int y) {
     glutPostRedisplay();
 }
 
-// <--- 修改：擴充 Keyboard 函式以控制太陽位置 --->
+// <--- 修改：擴充 Keyboard 函式以處理 w, s, r 鍵 --->
 void Keyboard(unsigned char key, int x, int y) {
     switch (key) {
+        case 's':
+        case 'S':
+            frameCamera.RotateLocalX(0.05f); // 向上看
+            break;
+        case 'w':
+        case 'W':
+            frameCamera.RotateLocalX(-0.05f); // 向下看
+            break;
         case ' ':
             isPaused = !isPaused;
             break;
         case '1': // 東昇 (Sunrise)
-            // 將光源設定在東邊地平線附近（正 X 軸，低 Y 值）
             fLightPos[0] = 100.0f;
             fLightPos[1] = 25.0f;
             fLightPos[2] = 0.0f;
-            // 立即重新計算陰影矩陣
             m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
             break;
         case '2': // 日正當中 (Noon)
-            // 將光源設定在正上方（高 Y 值）
             fLightPos[0] = 0.0f;
             fLightPos[1] = 100.0f;
             fLightPos[2] = 0.0f;
-            // 立即重新計算陰影矩陣
             m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
             break;
         case '3': // 西斜 (Sunset)
-            // 將光源設定在西邊地平線附近（負 X 軸，低 Y 值）
             fLightPos[0] = -100.0f;
             fLightPos[1] = 25.0f;
             fLightPos[2] = 0.0f;
-            // 立即重新計算陰影矩陣
             m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
             break;
+        case 'r':
+        case 'R':
+            // 重置攝影機
+            frameCamera.SetOrigin(0.0f, 0.0f, 15.0f);
+            frameCamera.SetForwardVector(0.0f, 0.0f, -1.0f);
+            frameCamera.SetUpVector(0.0f, 1.0f, 0.0f);
+
+            // 重置光源到正午
+            fLightPos[0] = 0.0f;
+            fLightPos[1] = 100.0f;
+            fLightPos[2] = 0.0f;
+            m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
+
+            // 重置動畫
+            yRot = 0.0f;
+            isPaused = false;
+            break;
     }
+    // 確保鍵盤輸入後立即重繪
+    glutPostRedisplay();
 }
 
 void TimerFunction(int value) {
@@ -866,7 +891,7 @@ void ChangeSize(int w, int h) {
     fAspect = (GLfloat)w / (GLfloat)h;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(35.0f, fAspect, 1.0f, 150.0f); // 增加遠裁剪面距離以看到遠方的太陽
+    gluPerspective(35.0f, fAspect, 1.0f, 250.0f); // 增加遠裁剪面距離以看到遠方的太陽
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
@@ -875,15 +900,15 @@ int main(int argc, char* argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_STENCIL);
     glutInitWindowSize(800, 600);
-    // <--- 修改：更新視窗標題 --->
-    glutCreateWindow("Final Project - Group 08 with Moving Sun (Keys 1,2,3)");
+    // <--- 修改：更新視窗標題以反映新控制 --->
+    glutCreateWindow("Final Project - Controls: Arrows, W/S, 1/2/3, R=Reset");
 
     glutReshapeFunc(ChangeSize);
     glutDisplayFunc(RenderScene);
     glutSpecialFunc(SpecialKeys);
     glutKeyboardFunc(Keyboard);
 
-    frameCamera.SetOrigin(0.0f, 0.0f, 15.0f); // 將攝影機稍微後退以便觀察
+    frameCamera.SetOrigin(0.0f, 0.0f, 15.0f);
 
     SetupRC();
     glutTimerFunc(33, TimerFunction, 1);
