@@ -539,7 +539,7 @@ M3DMatrix44f mShadowMatrix;
 #define NUM_TEXTURES         4
 GLuint  textureObjects[NUM_TEXTURES];
 
-const char* szTextureFiles[] = { "TGA/black&whiteTiles.tga", "TGA/wood.tga", "TGA/bush.tga", "TGA/pottedPlant.tga" };
+const char* szTextureFiles[] = { "TGA/blackandwhiteTiles.tga", "TGA/wood.tga", "TGA/bush.tga", "TGA/pottedPlant.tga" };
 // IMPORTANT: Ensure you have 'black&whiteTiles.tga', 'wood.tga', 'bush.tga', and 'pottedPlant.tga'
 // in your 'TGA' folder.
 
