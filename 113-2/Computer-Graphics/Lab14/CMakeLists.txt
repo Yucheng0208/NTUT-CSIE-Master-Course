@@ -13,7 +13,8 @@ if (APPLE)
 
     add_definitions(-DGL_SILENCE_DEPRECATION)
 
-    add_executable(CG_Lab14 main.cpp)
+    add_executable(CG_Lab14 main.cpp
+            main.cpp)
 
     target_link_libraries(CG_Lab14
             "-framework OpenGL"
@@ -25,7 +26,7 @@ if (APPLE)
         add_custom_command(TARGET CG_Lab14 POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${CMAKE_SOURCE_DIR}/${tex}
-                $<TARGET_FILE_DIR:CG_Lab13>)
+                $<TARGET_FILE_DIR:CG_Lab14>)
     endforeach()
 
 elseif (WIN32)
@@ -34,7 +35,8 @@ elseif (WIN32)
     include_directories(${PROJECT_SOURCE_DIR}/include)
     link_directories(${PROJECT_SOURCE_DIR}/lib)
 
-    add_executable(CG_Lab14 main.cpp)
+    add_executable(CG_Lab14 main.cpp
+            main.cpp)
 
     target_link_libraries(CG_Lab14
             freeglut

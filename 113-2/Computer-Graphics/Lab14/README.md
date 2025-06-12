@@ -1,43 +1,73 @@
-# OpenGL Shadow Projection - FreeGLUT Version
+# SphereWorld: 機器人與單一軌道衛星場景
 
-本專案為一個使用 FreeGLUT 實作的簡單平面陰影繪製範例，改編自 Richard S. Wright Jr. 的 OpenGL SuperBible 教學內容，並依照作業要求進行了調整。
+這是一個使用 C++ 和 OpenGL/GLUT 函式庫建立的 3D 圖形專案。此專案基於《OpenGL SuperBible》中的 SphereWorld 範例進行修改，展示了一個包含以下元素的動態場景：
+- 一個位於中央且持續播放動畫的機器人。
+- 一個環繞機器人公轉的球體（如同月球）。
+- 帶有紋理的地面。
+- 由遠方光源產生的動態平面陰影。
 
-## 題目說明
+整個專案被設計成一個獨立的 C++ 檔案，內建了必要的數學函式、座標框架類別以及 TGA 紋理讀取器，使其易於編譯與執行。
 
-- Modify the sourcce file `shadow.cpp` so that it can run without extra header files.
-- Modify the scene:
-    1. Place 4 different light sources in the scene and only 1 of them will be enable each time (the other three will be hidden)
-        - The shadow will also change according to the postion of the light source.
-    2. Draw the Jet in red.
-    3. Draw the Jet shadow in dark red color
-- Keyboad Control
-    - Rotate the plane along center: (left-right & up-down)
-    - Reset the plane
-    - Select light sources: switch among 4 different light sources (Key: 1, 2, 3, 4)
+## 主要功能
 
+*   **動畫機器人**:
+  *   身體會 360 度連續旋轉。
+  *   手臂和腿會同步擺動，模擬走路的姿態。
+*   **公轉的球體**:
+  *   一個帶有紋理的球體會以機器人為中心，在固定的軌道上進行公轉。
+*   **紋理貼圖**:
+  *   場景中的地面、機器人和球體都應用了 TGA 格式的紋理，增加了視覺豐富性。
+*   **光照與陰影**:
+  *   場景中設定了單一光源。
+  *   機器人與公轉球體會在地面上投射出即時更新的平面陰影。
+*   **互動式攝影機**:
+  *   使用者可以透過鍵盤自由地控制攝影機的移動與旋轉，從不同角度觀察場景。
+*   **動畫控制**:
+  *   可以隨時暫停或繼續場景中的所有動畫。
 
-## 功能說明
+## 操作說明
 
-- 顯示一個簡單的飛機模型（Jet）與其在地面的陰影
-- 支援多種光源位置（使用數字鍵 1–4 切換）
-- 可透過方向鍵旋轉視角觀察飛機與陰影效果
-- 使用自製的 `Math3D` 函式庫處理向量與矩陣運算
+| 按鍵                  | 功能                       |
+| --------------------- | -------------------------- |
+| **上/下方向鍵**       | 向前/向後移動攝影機        |
+| **左/右方向鍵**       | 向左/向右旋轉攝影機        |
+| **`p` 鍵** 或 **空白鍵** | 暫停或繼續動畫             |
 
-## 執行畫面
+## 編譯與執行
 
-> 💡 預設將顯示紅色飛機，並投影陰影至地面，陰影顏色為暗紅色（紅色半透明）
+### 環境需求
+您需要一個支援 C++ 的編譯器（例如 g++）以及 OpenGL 和 GLUT 函式庫。
 
-## 控制說明
+在基於 Debian/Ubuntu 的 Linux 系統上，可以透過以下指令安裝所需套件：
+```bash
+sudo apt-get install build-essential freeglut3-dev
+```
+在 macOS 上，GLUT 通常已內建於 Xcode Command Line Tools。在 Windows 上，您可能需要手動設定 GLUT 環境。
 
-| 鍵位 | 功能            |
-|------|---------------|
-| ↑    | 向上旋轉物體        |
-| ↓    | 向下旋轉物體        |
-| ←    | 向左旋轉物體        |
-| →    | 向右旋轉物體        |
-| 1    | 切換至光源位置 1     |
-| 2    | 切換至光源位置 2     |
-| 3    | 切換至光源位置 3     |
-| 4    | 切換至光源位置 4（預設） |
-| r | 重置物體座標        |
-| Esc  | 離開程式          |
+### 所需檔案
+請確保以下檔案位於同一個目錄下：
+- `sphereworld_robot.cpp` (將 `main.txt` 重新命名)
+- `grass.tga` (地面紋理)
+- `wood.tga` (機器人紋理)
+- `orb.tga` (球體紋理)
+- 
+## 程式碼結構概覽
+
+- **內嵌輔助程式碼**:
+  - `GLFrame` 類別: 一個簡易的框架類別，用於管理物件與攝影機的座標變換（位置與方向）。
+  - `gltLoadTGA`: 一個輕量的 TGA 紋理檔案讀取器。
+  - 數學函式: 包含向量運算與計算陰影矩陣所需的函式。
+
+- **繪圖函式**:
+  - `DrawTexturedCube()`: 繪製帶有正確紋理座標的立方體，是構成機器人的基本元件。
+  - `DrawRobot()`: 組合多個立方體與球體來繪製完整的機器人，並套用動畫旋轉。
+  - `DrawGround()`: 繪製帶有草地紋理的地面。
+  - `DrawInhabitants()`: 統一繪製場景中的動態物件（機器人與球體），並可選擇是否以陰影模式繪製。
+
+- **GLUT 回呼函式**:
+  - `SetupRC()`: 初始化 OpenGL 渲染環境，設定光照、紋理、以及物件的初始狀態。
+  - `RenderScene()`: 主要的繪圖函式，負責每一幀的場景渲染，包含陰影的繪製。
+  - `TimerFunction()`: 定時器函式，用於更新機器人與球體的動畫參數，並觸發重繪。
+  - `SpecialKeys()` / `Keyboard()`: 處理使用者的鍵盤輸入。
+  - `ChangeSize()`: 處理視窗大小變更事件。
+  - `main()`: 程式進入點，初始化 GLUT 並進入主迴圈。

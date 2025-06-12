@@ -1,24 +1,11 @@
-// sphereworld_robot.cpp
-//
-// Based on SphereWorld.cpp from the OpenGL SuperBible by Richard S. Wright Jr.
-// Modified to be self-contained and feature an animated robot and a single orbiting sphere.
-//
-// Instructions:
-//  - Arrow Keys: Move the camera
-//  - 'p' or Spacebar: Pause/Unpause animation
-//
 #include <GL/glut.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h> // For memcpy
+#include <string.h>
 
 // M3D_PI can be used for conversion from degrees to radians
 #define M3D_PI (3.14159265358979323846)
-
-///////////////////////////////////////////////////////////////////////////////
-// Self-contained Math, Frame, and TGA Loader Code
-///////////////////////////////////////////////////////////////////////////////
 
 // 3D Vector and Matrix types
 typedef float M3DVector3f[3];
@@ -176,11 +163,6 @@ void m3dMakePlanarShadowMatrix(M3DMatrix44f proj, const M3DVector4f planeEq, con
     proj[15] = dot - 1.0f * planeEq[3];
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// Application-specific global variables and code
-///////////////////////////////////////////////////////////////////////////////
-
-// << 修改: 將球體數量改為 1 >>
 #define NUM_SPHERES      1
 GLFrame    spheres[NUM_SPHERES];
 GLFrame    frameCamera;
