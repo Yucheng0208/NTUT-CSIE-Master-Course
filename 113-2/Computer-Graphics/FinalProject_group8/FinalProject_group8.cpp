@@ -3,7 +3,10 @@
 // Demonstrates an immersive 3D environment with an animated robot.
 // Original program by Richard S. Wright Jr.
 // Modified to be a single file, include a robot, pause functionality,
-// and operate without the GLEWE library.
+// and operate without the GLEW library.
+//
+// Added a sun sphere to represent the light source.
+// Added keyboard controls (1, 2, 3) to move the sun (East, Noon, West).
 
 // Disable fopen security warning on MSVC
 #define _CRT_SECURE_NO_WARNINGS
@@ -91,7 +94,7 @@ void m3dGetPlaneEquation(M3DVector4f planeEq, const M3DVector3f p1, const M3DVec
 void m3dMakePlanarShadowMatrix(M3DMatrix44f proj, const M3DVector4f planeEq, const GLfloat* lightPos) {
     float dot = planeEq[0] * lightPos[0] + planeEq[1] * lightPos[1] + planeEq[2] * lightPos[2] + planeEq[3] * lightPos[3];
     proj[0] = dot - lightPos[0] * planeEq[0]; proj[4] = 0.0f - lightPos[0] * planeEq[1]; proj[8] = 0.0f - lightPos[0] * planeEq[2]; proj[12] = 0.0f - lightPos[0] * planeEq[3];
-    proj[1] = 0.0f - lightPos[1] * planeEq[0]; proj[5] = dot - lightPos[1] * planeEq[1]; proj[9] = 0.0f - lightPos[1] * planeEq[2]; proj[13] = 0.0f - lightPos[1] * planeEq[3]; // FIX: Changed planePos to planeEq
+    proj[1] = 0.0f - lightPos[1] * planeEq[0]; proj[5] = dot - lightPos[1] * planeEq[1]; proj[9] = 0.0f - lightPos[1] * planeEq[2]; proj[13] = 0.0f - lightPos[1] * planeEq[3];
     proj[2] = 0.0f - lightPos[2] * planeEq[0]; proj[6] = 0.0f - lightPos[2] * planeEq[1]; proj[10] = dot - lightPos[2] * planeEq[2]; proj[14] = 0.0f - lightPos[2] * planeEq[3];
     proj[3] = 0.0f - lightPos[3] * planeEq[0]; proj[7] = 0.0f - lightPos[3] * planeEq[1]; proj[11] = 0.0f - lightPos[3] * planeEq[2]; proj[15] = dot - lightPos[3] * planeEq[3];
 }
@@ -265,15 +268,15 @@ GLbyte* gltLoadTGA(const char* szFileName, GLint* iWidth, GLint* iHeight, GLint*
     switch (sDepth) {
     case 3:
         *eFormat = GL_BGR_EXT;
-        *iComponents = GL_RGB8; // GL_RGB
+        *iComponents = GL_RGB;
         break;
     case 4:
         *eFormat = GL_BGRA_EXT;
-        *iComponents = GL_RGBA8; // GL_RGBA
+        *iComponents = GL_RGBA;
         break;
     case 1:
         *eFormat = GL_LUMINANCE;
-        *iComponents = GL_LUMINANCE8; // GL_LUMINANCE
+        *iComponents = GL_LUMINANCE;
         break;
     };
 
@@ -525,12 +528,16 @@ bool LoadOBJ(const char* filename, OBJModel& model) {
 // Main Application Globals
 GLFrame frameCamera;
 
-GLfloat fLightPos[4] = { -100.0f, 100.0f, 50.0f, 1.0f };
+// <--- 修改：設定光源初始位置為「日正當中」--->
+GLfloat fLightPos[4] = { 0.0f, 100.0f, 0.0f, 1.0f }; // Noon
 GLfloat fNoLight[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 GLfloat fLowLight[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 GLfloat fBrightLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 M3DMatrix44f mShadowMatrix;
+
+// <--- 新增：全域變數來儲存地平面方程式，以便在鍵盤回呼函式中重新計算陰影 --->
+M3DVector4f g_pPlane;
 
 #define GROUND_TEXTURE       0
 #define DINING_TABLE_TEXTURE 1
@@ -554,6 +561,7 @@ OBJModel pottedPlant_obj;
 void DrawOBJModel(const OBJModel& model, GLuint textureID, GLint nShadow);
 void DrawInhabitants(GLint nShadow);
 void Keyboard(unsigned char key, int x, int y);
+void DrawSun(void);
 
 
 void SetupRC() {
@@ -582,9 +590,10 @@ void SetupRC() {
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 
-    M3DVector4f pPlane;
-    m3dGetPlaneEquation(pPlane, vPoints[0], vPoints[1], vPoints[2]);
-    m3dMakePlanarShadowMatrix(mShadowMatrix, pPlane, fLightPos);
+    // <--- 修改：計算地平面方程式並儲存到全域變數 g_pPlane --->
+    m3dGetPlaneEquation(g_pPlane, vPoints[0], vPoints[1], vPoints[2]);
+    // <--- 修改：使用初始光源位置計算初始的陰影矩陣 --->
+    m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
 
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
@@ -605,9 +614,6 @@ void SetupRC() {
         pBytes = gltLoadTGA(szTextureFiles[i], &iWidth, &iHeight, &iComponents, &eFormat);
         if (pBytes == NULL) {
             cerr << "Error loading TGA file: " << szTextureFiles[i] << endl;
-            // You could consider binding a fallback texture here, e.g., a simple white pixel
-            // GLubyte fallbackTex[] = {255, 255, 255, 255};
-            // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, fallbackTex);
             continue;
         }
         gluBuild2DMipmaps(GL_TEXTURE_2D, iComponents, iWidth, iHeight, eFormat, GL_UNSIGNED_BYTE, pBytes);
@@ -615,15 +621,14 @@ void SetupRC() {
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // Default for most OBJ textures
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Default for most OBJ textures
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
-    // Ensure ground texture uses GL_REPEAT for tiling
+
     glBindTexture(GL_TEXTURE_2D, textureObjects[GROUND_TEXTURE]);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    // --- Load OBJ Models ---
     if (!LoadOBJ("OBJ/diningTable.obj", diningTable_obj)) {
         cerr << "Failed to load OBJ/diningTable.obj" << endl;
     }
@@ -633,21 +638,19 @@ void SetupRC() {
     if (!LoadOBJ("OBJ/pottedPlant.obj", pottedPlant_obj)) {
         cerr << "Failed to load OBJ/pottedPlant.obj" << endl;
     }
-    // --- END OBJ Loading ---
 }
 
 void ShutdownRC(void) {
     glDeleteTextures(NUM_TEXTURES, textureObjects);
-    // OBJModel uses vectors, which manage their own memory.
 }
 
 void DrawGround(void) {
     GLfloat fExtent = 20.0f;
     GLfloat fStep = 1.0f;
-    GLfloat y = -0.4f; // Ground plane is at Y = -0.4f
+    GLfloat y = -0.4f;
     GLfloat s = 0.0f;
     GLfloat t = 0.0f;
-    GLfloat texStep = 1.0f / (fExtent * .075f); // Controls how often texture repeats
+    GLfloat texStep = 1.0f / (fExtent * .075f);
 
     glBindTexture(GL_TEXTURE_2D, textureObjects[GROUND_TEXTURE]);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -658,7 +661,7 @@ void DrawGround(void) {
         glBegin(GL_TRIANGLE_STRIP);
         for (GLfloat iRun = fExtent; iRun >= -fExtent; iRun -= fStep) {
             glTexCoord2f(s, t);
-            glNormal3f(0.0f, 1.0f, 0.0f); // Normal points straight up (Y-axis)
+            glNormal3f(0.0f, 1.0f, 0.0f);
             glVertex3f(iStrip, y, iRun);
 
             glTexCoord2f(s + texStep, t);
@@ -671,18 +674,17 @@ void DrawGround(void) {
     }
 }
 
-// Function to draw an OBJ model
 void DrawOBJModel(const OBJModel& model, GLuint textureID, GLint nShadow) {
     if (nShadow == 0) {
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, textureID);
-        glColor4f(1.0f, 1.0f, 1.0f, 1.0f); // Reset color to white to allow texture colors to show
-        glMaterialfv(GL_FRONT, GL_SPECULAR, fBrightLight); // Ensure specular is on for real objects
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, fBrightLight);
     }
     else {
         glDisable(GL_TEXTURE_2D);
-        glColor4f(0.0f, 0.0f, 0.0f, 0.6f); // Shadow color (black with transparency)
-        glMaterialfv(GL_FRONT, GL_SPECULAR, fNoLight); // Shadows don't need specular
+        glColor4f(0.0f, 0.0f, 0.0f, 0.6f);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, fNoLight);
     }
 
     if (!model.vertices.empty()) {
@@ -695,10 +697,7 @@ void DrawOBJModel(const OBJModel& model, GLuint textureID, GLint nShadow) {
         glNormalPointer(GL_FLOAT, 0, model.normals.data());
     }
     else {
-        // Fallback: If no normals are loaded, use a default normal for all vertices.
-        // This will result in flat shading unless calculated per-face.
-        // For OBJ models, having normals is crucial for correct lighting.
-        glNormal3f(0.0f, 1.0f, 0.0f); // Example: point up
+        glNormal3f(0.0f, 1.0f, 0.0f);
     }
 
     if (nShadow == 0 && !model.texCoords.empty()) {
@@ -710,7 +709,6 @@ void DrawOBJModel(const OBJModel& model, GLuint textureID, GLint nShadow) {
         glDrawElements(GL_TRIANGLES, model.indices.size(), GL_UNSIGNED_INT, model.indices.data());
     }
     else {
-        // If no indices, draw using glDrawArrays (less efficient, assumes linear data)
         glDrawArrays(GL_TRIANGLES, 0, model.vertices.size() / 3);
     }
 
@@ -721,6 +719,21 @@ void DrawOBJModel(const OBJModel& model, GLuint textureID, GLint nShadow) {
     if (nShadow == 0 && !model.texCoords.empty()) {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
+}
+
+void DrawSun(void) {
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+
+    glColor3f(1.0f, 1.0f, 0.0f);
+
+    glPushMatrix();
+        glTranslatef(fLightPos[0], fLightPos[1], fLightPos[2]);
+        glutSolidSphere(5.0f, 20, 20); // 縮小太陽的視覺大小
+    glPopMatrix();
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
 }
 
 
@@ -736,28 +749,19 @@ void DrawInhabitants(GLint nShadow) {
     glPushMatrix();
     glTranslatef(0.0f, -0.4f, -2.5f);
     glRotatef(270, 1.0f, 0.0f, 0.0f);
-    glScalef(0.3f, 0.3f, 0.3f); // Dining table scaled to 0.2x
+    glScalef(0.3f, 0.3f, 0.3f);
     DrawOBJModel(diningTable_obj, textureObjects[DINING_TABLE_TEXTURE], nShadow);
     glPopMatrix();
 
     // Draw 5 Draw bush.obj (using bush.tga)
     for (int i = 0; i < 5; ++i) {
         glPushMatrix();
-        float initialZ[5] = { 0.0f, 1.0f, 2.0f, 3.0f, 4.0f }; // 稍微錯開 Z 軸
+        float initialZ[5] = { 0.0f, 1.0f, 2.0f, 3.0f, 4.0f };
 
-        // 第一個平移，將模型帶到一個基準點
-        glTranslatef(0.0f, -0.4f, -2.5f); // 餐桌的基礎位置
-
-        // 旋轉，這是你提供的旋轉邏輯
-        // 我們讓每個 bush 的旋轉角度稍微錯開，這樣它們看起來不會完全同步
+        glTranslatef(0.0f, -0.4f, -2.5f);
         glRotatef(yRot * orbitSpeed * 2.0f, 0.0f, 1.0f, 0.0f);
-
-        // 第二個平移，這是在旋轉後的局部坐標系中進行的
-        // 調整這個平移，讓它們繞著中心點形成一個圓圈
-        glTranslatef(10.0f, -0.4f, initialZ[i]); // 10.0f 變成了 initialX，且 Y 仍為 0.0f 以保持在地面
-
-        glScalef(0.3f, 0.3f, 0.3f); // 統一使用 0.3f 的縮放比例
-
+        glTranslatef(10.0f, -0.4f, initialZ[i]);
+        glScalef(0.3f, 0.3f, 0.3f);
         DrawOBJModel(grass_obj_model, textureObjects[BUSH_OBJ_TEXTURE], nShadow);
         glPopMatrix();
     }
@@ -766,9 +770,9 @@ void DrawInhabitants(GLint nShadow) {
     glPushMatrix();
     glTranslatef(0.0f, -0.2f, -2.5f);
     glRotatef(yRot, 0.0f, 1.0f, 0.0f);
-    glTranslatef(0.0f, 0.5f, 0.0f); // Adjust Y to place it on top of the table. You'll likely need to fine-tune this.
+    glTranslatef(0.0f, 0.5f, 0.0f);
     glScalef(0.02f, 0.02f, 0.02f);
-    DrawOBJModel(pottedPlant_obj, textureObjects[POTTED_PLANT_TEXTURE], nShadow); // POTTED_PLANT_TEXTURE maps to pottedPlant.tga
+    DrawOBJModel(pottedPlant_obj, textureObjects[POTTED_PLANT_TEXTURE], nShadow);
     glPopMatrix();
 }
 
@@ -779,29 +783,31 @@ void RenderScene(void) {
     frameCamera.ApplyCameraTransform();
     glLightfv(GL_LIGHT0, GL_POSITION, fLightPos);
 
-    glColor3f(1.0f, 1.0f, 1.0f); // Reset color to white to ensure texture colors show properly
+    DrawSun();
+
+    glColor3f(1.0f, 1.0f, 1.0f);
     DrawGround();
 
     // Draw shadows
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D); // No textures for shadows
+    glDisable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_STENCIL_TEST);
     glPushMatrix();
     glMultMatrixf(mShadowMatrix);
-    DrawInhabitants(1); // Draw shadows (nShadow = 1)
+    DrawInhabitants(1);
     glPopMatrix();
     glDisable(GL_STENCIL_TEST);
     glDisable(GL_BLEND);
 
     // Draw real objects
     glEnable(GL_LIGHTING);
-    glEnable(GL_TEXTURE_2D); // Enable textures for real objects
+    glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
 
-    DrawInhabitants(0); // Draw real objects (nShadow = 0)
+    DrawInhabitants(0);
 
     glPopMatrix();
     glutSwapBuffers();
@@ -815,9 +821,36 @@ void SpecialKeys(int key, int x, int y) {
     glutPostRedisplay();
 }
 
+// <--- 修改：擴充 Keyboard 函式以控制太陽位置 --->
 void Keyboard(unsigned char key, int x, int y) {
-    if (key == ' ') {
-        isPaused = !isPaused;
+    switch (key) {
+        case ' ':
+            isPaused = !isPaused;
+            break;
+        case '1': // 東昇 (Sunrise)
+            // 將光源設定在東邊地平線附近（正 X 軸，低 Y 值）
+            fLightPos[0] = 100.0f;
+            fLightPos[1] = 25.0f;
+            fLightPos[2] = 0.0f;
+            // 立即重新計算陰影矩陣
+            m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
+            break;
+        case '2': // 日正當中 (Noon)
+            // 將光源設定在正上方（高 Y 值）
+            fLightPos[0] = 0.0f;
+            fLightPos[1] = 100.0f;
+            fLightPos[2] = 0.0f;
+            // 立即重新計算陰影矩陣
+            m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
+            break;
+        case '3': // 西斜 (Sunset)
+            // 將光源設定在西邊地平線附近（負 X 軸，低 Y 值）
+            fLightPos[0] = -100.0f;
+            fLightPos[1] = 25.0f;
+            fLightPos[2] = 0.0f;
+            // 立即重新計算陰影矩陣
+            m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
+            break;
     }
 }
 
@@ -833,7 +866,7 @@ void ChangeSize(int w, int h) {
     fAspect = (GLfloat)w / (GLfloat)h;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(35.0f, fAspect, 1.0f, 50.0f);
+    gluPerspective(35.0f, fAspect, 1.0f, 150.0f); // 增加遠裁剪面距離以看到遠方的太陽
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
@@ -842,18 +875,15 @@ int main(int argc, char* argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_STENCIL);
     glutInitWindowSize(800, 600);
-    glutCreateWindow("Final Project - Group 08");
+    // <--- 修改：更新視窗標題 --->
+    glutCreateWindow("Final Project - Group 08 with Moving Sun (Keys 1,2,3)");
 
     glutReshapeFunc(ChangeSize);
     glutDisplayFunc(RenderScene);
     glutSpecialFunc(SpecialKeys);
     glutKeyboardFunc(Keyboard);
 
-    // Set initial camera position to look down at the XZ plane.
-    // Y=5.0f (height), Z=10.0f (distance back from origin)
-    frameCamera.SetOrigin(0.0f, 0.0f, 5.0f);
-    // The camera's default vForward (0,0,-1) means it looks towards negative Z.
-    // From (0, 5, 10), looking at -Z will naturally point towards the XZ plane near the origin.
+    frameCamera.SetOrigin(0.0f, 0.0f, 15.0f); // 將攝影機稍微後退以便觀察
 
     SetupRC();
     glutTimerFunc(33, TimerFunction, 1);
