@@ -10,6 +10,9 @@
 // Modified the sun to be a textured sphere using sun.tga.
 // Corrected sun texture color by using GL_REPLACE texture environment.
 // Added W/S for camera pitch and R to reset the scene.
+// Added key '4' to trigger a 5-second firework show, which then resets the scene.
+// Firework show is denser, and world animations continue during the show.
+// MODIFIED: Firework show is now a "sky-filling" spectacular.
 
 // Disable fopen security warning on MSVC
 #define _CRT_SECURE_NO_WARNINGS
@@ -33,6 +36,7 @@
 #define GL_BGRA_EXT 0x80E1
 #define GL_CLAMP_TO_EDGE 0x812F
 #define M_PI 3.1415926
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -83,6 +87,12 @@ void m3dRotationMatrix44(M3DMatrix44f m, float angle, float x, float y, float z)
     m[1] = y * x * (1 - c) + z * s; m[5] = y * y * (1 - c) + c;      m[9] = y * z * (1 - c) - x * s; m[13] = 0.0f;
     m[2] = z * x * (1 - c) - y * s; m[6] = z * y * (1 - c) + x * s; m[10] = z * z * (1 - c) + c;      m[14] = 0.0f;
     m[3] = 0.0f;                      m[7] = 0.0f;                       m[11] = 0.0f;                       m[15] = 1.0f;
+}
+
+void m3dTransformVector3(M3DVector3f out, const M3DVector3f in, const M3DMatrix44f m) {
+    out[0] = in[0] * m[0] + in[1] * m[4] + in[2] * m[8] + m[12];
+    out[1] = in[0] * m[1] + in[1] * m[5] + in[2] * m[9] + m[13];
+    out[2] = in[0] * m[2] + in[1] * m[6] + in[2] * m[10] + m[14];
 }
 
 void m3dGetPlaneEquation(M3DVector4f planeEq, const M3DVector3f p1, const M3DVector3f p2, const M3DVector3f p3) {
@@ -206,25 +216,16 @@ public:
         m3dCopyVector3(vForward, newVect);
     }
 
-    // <--- 新增：RotateLocalX 方法，用於攝影機抬頭/低頭 --->
     void RotateLocalX(float fAngle) {
         M3DMatrix44f rotMat;
         M3DVector3f vCross;
-
-        // 取得本地 X 軸
         m3dCrossProduct(vCross, vUp, vForward);
-
-        // 建立旋轉矩陣
         m3dRotationMatrix44(rotMat, fAngle, vCross[0], vCross[1], vCross[2]);
-
-        // 旋轉 Forward 向量
         M3DVector3f newVect;
         newVect[0] = rotMat[0] * vForward[0] + rotMat[4] * vForward[1] + rotMat[8] * vForward[2];
         newVect[1] = rotMat[1] * vForward[0] + rotMat[5] * vForward[1] + rotMat[9] * vForward[2];
         newVect[2] = rotMat[2] * vForward[0] + rotMat[6] * vForward[1] + rotMat[10] * vForward[2];
         m3dCopyVector3(vForward, newVect);
-
-        // 旋轉 Up 向量
         newVect[0] = rotMat[0] * vUp[0] + rotMat[4] * vUp[1] + rotMat[8] * vUp[2];
         newVect[1] = rotMat[1] * vUp[0] + rotMat[5] * vUp[1] + rotMat[9] * vUp[2];
         newVect[2] = rotMat[2] * vUp[0] + rotMat[6] * vUp[1] + rotMat[10] * vUp[2];
@@ -310,83 +311,6 @@ GLbyte* gltLoadTGA(const char* szFileName, GLint* iWidth, GLint* iHeight, GLint*
 
     fclose(pFile);
     return pBits;
-}
-
-// gltDrawSphere and DrawCube are no longer directly used but kept for reference if needed.
-void gltDrawSphere(GLfloat fRadius, GLint iSlices, GLint iStacks) {
-    for (int i = 0; i < iStacks; ++i) {
-        float lat0 = M_PI * (-0.5 + (float)i / iStacks);
-        float z0 = sin(lat0);
-        float zr0 = cos(lat0);
-
-        float lat1 = M_PI * (-0.5 + (float)(i + 1) / iStacks);
-        float z1 = sin(lat1);
-        float zr1 = cos(lat1);
-
-        glBegin(GL_QUAD_STRIP);
-        for (int j = 0; j <= iSlices; ++j) {
-            float lng = 2 * M_PI * (float)(j) / iSlices;
-            float x = cos(lng);
-            float y = sin(lng);
-
-            float nx = x * zr0;
-            float ny = y * zr0;
-            float nz = z0;
-            glNormal3f(nx, ny, nz);
-            glTexCoord2f((float)j / iSlices, (float)i / iStacks);
-            glVertex3f(fRadius * nx, fRadius * ny, fRadius * nz);
-
-            nx = x * zr1;
-            ny = y * zr1;
-            nz = z1;
-            glNormal3f(nx, ny, nz);
-            glTexCoord2f((float)j / iSlices, (float)(i + 1) / iStacks);
-            glVertex3f(fRadius * nx, fRadius * ny, fRadius * nz);
-        }
-        glEnd();
-    }
-}
-
-void DrawCube(float fSize) {
-    float size = fSize * 0.5f;
-    glBegin(GL_QUADS);
-    // Front Face
-    glNormal3f(0.0f, 0.0f, 1.0f);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, -size, size);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(size, -size, size);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(size, size, size);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(-size, size, size);
-    // Back Face
-    glNormal3f(0.0f, 0.0f, -1.0f);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(-size, -size, -size);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(-size, size, -size);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(size, size, -size);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(size, -size, -size);
-    // Top Face
-    glNormal3f(0.0f, 1.0f, 0.0f);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(-size, size, -size);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, size, size);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(size, size, size);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(size, size, -size);
-    // Bottom Face
-    glNormal3f(0.0f, -1.0f, 0.0f);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(-size, -size, -size);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(size, -size, -size);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(size, -size, size);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(-size, -size, size);
-    // Right face
-    glNormal3f(1.0f, 0.0f, 0.0f);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(size, -size, -size);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(size, size, -size);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(size, size, size);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(size, -size, size);
-    // Left Face
-    glNormal3f(-1.0f, 0.0f, 0.0f);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, -size, -size);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(-size, -size, size);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(-size, size, size);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(-size, size, -size);
-    glEnd();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -508,18 +432,21 @@ bool LoadOBJ(const char* filename, OBJModel& model) {
             if (uvIndex < model.temp_texCoords.size() / 2) {
                 model.texCoords.push_back(model.temp_texCoords[uvIndex * 2]);
                 model.texCoords.push_back(model.temp_texCoords[uvIndex * 2 + 1]);
-            } else {
+            }
+            else {
                 model.texCoords.push_back(0.0f); model.texCoords.push_back(0.0f);
             }
             if (normalIndex < model.temp_normals.size() / 3) {
                 model.normals.push_back(model.temp_normals[normalIndex * 3]);
                 model.normals.push_back(model.temp_normals[normalIndex * 3 + 1]);
                 model.normals.push_back(model.temp_normals[normalIndex * 3 + 2]);
-            } else {
+            }
+            else {
                 model.normals.push_back(0.0f); model.normals.push_back(1.0f); model.normals.push_back(0.0f);
             }
             current_index++;
-        } else {
+        }
+        else {
             model.indices.push_back(uniqueVertexMap[key]);
         }
     }
@@ -529,7 +456,63 @@ bool LoadOBJ(const char* filename, OBJModel& model) {
     return true;
 }
 // --- End OBJ Loader Definitions ---
+enum CameraMode { MODE_FIRST, MODE_THIRD, MODE_FAR, MODE_TOP };
+CameraMode camMode = MODE_FIRST;
+bool isFirstPerson = true;
+float thirdPersonYaw = 0.0f;
+float thirdPersonPitch = 0.0f;
+const float thirdPersonDist = 9.0f;
+const float thirdPersonHeight = 2.0f;
+const float thirdPersonPitchMin = -0.5f;
+const float thirdPersonPitchMax = 1.4f;
 
+float firstPersonPitch = 0.0f;
+const float firstPersonPitchMin = -0.5f;
+const float firstPersonPitchMax = 1.4f;
+const float pitchDelta = 0.05f;
+
+float farPitchANGLE = M_PI / 48;
+float   farYaw = 0, farPitch = farPitchANGLE, farDist = 50, farHeight = 7;
+float   topYaw = 0, topPitch = -M_PI / 2, topDist = 40, topHeight = 50;
+
+float lastYawD = 0.0f;
+float lastPitchD = 0.0f;
+const float topPitchMin = -M_PI;
+const float topPitchMax = 0.0f;
+
+M3DVector3f characterPos = { 0.0f, 1.5f, 15.0f };
+
+M3DVector3f savedForward = { 0.0f, 0.0f, 1.0f };
+M3DVector3f savedUp;
+
+M3DVector3f firstForward, firstUp;
+
+M3DVector3f sceneCenter = { 0.0f, 0.0f, 0.0f };
+M3DVector3f freeCamPos;
+
+bool animationEnabled = true;
+float animationSpeed = 30.0f;
+float animTime = 0.0f;
+
+// Robot joint angles
+float headRot = 0.0f;
+bool moving = false;
+float headYaw = 0.0f, headPitch = 0.0f;
+const float headPitchMin = -0.5f, headPitchMax = 1.4f;
+
+bool swingReverse = false;
+float armSwingAngle = 0.0f;
+const float swingStep = 30.0f;
+const float swingSpeed = 2.0f;
+
+const float walkSwing = 30.0f;
+float torsoRot = 0.0f;
+float rightArmRot = 30.0f;
+float rightElbowRot = -20.0f;
+float leftArmRot = -30.0f;
+float leftElbowRot = 20.0f;
+float leftLegRot = 0.0f;
+float rightLegRot = 0.0f;
 
 // Main Application Globals
 GLFrame frameCamera;
@@ -542,29 +525,147 @@ GLfloat fBrightLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 M3DMatrix44f mShadowMatrix;
 M3DVector4f g_pPlane;
 
+void UpdateCameraView() {
+    switch (camMode) {
+    case MODE_FIRST:
+        frameCamera.SetOrigin(characterPos);
+        frameCamera.SetForwardVector(firstForward);
+        frameCamera.SetUpVector(firstUp);
+        m3dCopyVector3(savedForward, firstForward);
+        m3dCopyVector3(savedUp, firstUp);
+        break;
+
+    case MODE_THIRD: {
+        savedForward[0] = sin(thirdPersonYaw) * cos(thirdPersonPitch);
+        savedForward[1] = sin(thirdPersonPitch);
+        savedForward[2] = cos(thirdPersonYaw) * cos(thirdPersonPitch);
+        m3dNormalizeVector(savedForward);
+        M3DVector3f worldUp = { 0,1,0 }, right, newUp;
+        m3dCrossProduct(right, worldUp, savedForward);
+        m3dNormalizeVector(right);
+        m3dCrossProduct(newUp, savedForward, right);
+        m3dNormalizeVector(newUp);
+        m3dCopyVector3(savedUp, newUp);
+        M3DVector3f camPos = {
+            characterPos[0] - savedForward[0] * thirdPersonDist,
+            characterPos[1] + thirdPersonHeight,
+            characterPos[2] - savedForward[2] * thirdPersonDist
+        };
+        frameCamera.SetOrigin(camPos);
+        frameCamera.SetForwardVector(savedForward);
+        frameCamera.SetUpVector(savedUp);
+        m3dCopyVector3(firstForward, savedForward);
+        m3dCopyVector3(firstUp, savedUp);
+        break;
+    }
+
+    case MODE_FAR: {
+        float cp = cosf(farPitch), sp = sinf(farPitch);
+        float sy = sinf(farYaw), cy = cosf(farYaw);
+        M3DVector3f offset = { farDist * cp * sy, farDist * sp, farDist * cp * cy };
+        freeCamPos[0] = sceneCenter[0] + offset[0];
+        freeCamPos[1] = sceneCenter[1] + offset[1] + farHeight;
+        freeCamPos[2] = sceneCenter[2] + offset[2];
+        savedForward[0] = sceneCenter[0] - freeCamPos[0];
+        savedForward[1] = sceneCenter[1] - freeCamPos[1];
+        savedForward[2] = sceneCenter[2] - freeCamPos[2];
+        m3dNormalizeVector(savedForward);
+        M3DVector3f worldUp = { 0, 1, 0 };
+        m3dCopyVector3(savedUp, worldUp);
+        frameCamera.SetOrigin(freeCamPos);
+        frameCamera.SetForwardVector(savedForward);
+        frameCamera.SetUpVector(savedUp);
+        break;
+    }
+    case MODE_TOP: {
+        freeCamPos[0] = sceneCenter[0];
+        freeCamPos[1] = sceneCenter[1] + topHeight;
+        freeCamPos[2] = sceneCenter[2];
+        savedForward[0] = 0; savedForward[1] = -1; savedForward[2] = 0;
+        savedUp[0] = 0; savedUp[1] = 0; savedUp[2] = -1;
+        frameCamera.SetOrigin(freeCamPos);
+        frameCamera.SetForwardVector(savedForward);
+        frameCamera.SetUpVector(savedUp);
+        break;
+    }
+    }
+
+    glutPostRedisplay();
+}
+
+
 #define GROUND_TEXTURE       0
 #define DINING_TABLE_TEXTURE 1
 #define BUSH_OBJ_TEXTURE     2
 #define POTTED_PLANT_TEXTURE 3
 #define SUN_TEXTURE          4
-#define NUM_TEXTURES         5
+#define DIAMOND_CARD_TEXTURE 5
+#define HEART_CARD_TEXTURE   6
+#define NUM_TEXTURES         7
+
 GLuint  textureObjects[NUM_TEXTURES];
 
-const char* szTextureFiles[] = { "TGA/blackandwhiteTiles.tga", "TGA/wood.tga", "TGA/bush.tga", "TGA/pottedPlant.tga", "TGA/sun.tga" };
+const char* szTextureFiles[] = { "TGA/blackandwhiteTiles.tga", "TGA/wood.tga", "TGA/bush.tga", "TGA/pottedPlant.tga", "TGA/sun.tga",  "TGA/diamond.tga", "TGA/heart.tga" };
 
 bool isPaused = false;
-GLfloat yRot = 0.0f; // <--- 修改：將 yRot 改為全域變數以便重置
+GLfloat yRot = 0.0f;
+
+// Firework Mode Globals
+bool isFireworkMode = false;
+float fireworkTimer = 0.0f;
 
 // Global OBJ models
 OBJModel diningTable_obj;
 OBJModel grass_obj_model;
 OBJModel pottedPlant_obj;
+OBJModel playingCard_obj;
+
+// Fireworks Settings
+struct FireworkParticle {
+    float x, y, z;
+    float vx, vy, vz;
+    float r, g, b;
+    float life;
+};
+
+vector<FireworkParticle> particles;
+
+// Windows Size
+int winWidth = 800, winHeight = 600;
 
 // Forward Declarations
 void DrawOBJModel(const OBJModel& model, GLuint textureID, GLint nShadow);
 void DrawInhabitants(GLint nShadow);
 void Keyboard(unsigned char key, int x, int y);
 void DrawSun(void);
+void ResetScene(void);
+
+// Function to launch a firework burst for the automatic show
+void LaunchAutomaticFirework() {
+    float worldX = ((float)rand() / RAND_MAX) * 80.0f - 40.0f;
+    float worldY = ((float)rand() / RAND_MAX) * 30.0f + 25.0f; // Vary height more
+    float worldZ = ((float)rand() / RAND_MAX) * 80.0f - 40.0f;
+
+    // MODIFIED: Create a much denser and more spectacular burst for "sky-filling" effect.
+    for (int i = 0; i < 350; ++i) { // Increased particle count
+        FireworkParticle p;
+        p.x = worldX;
+        p.y = worldY;
+        p.z = worldZ;
+
+        float angle1 = ((float)rand() / RAND_MAX) * 2 * M_PI;
+        float angle2 = ((float)rand() / RAND_MAX) * M_PI;
+        float speed = ((float)rand() / RAND_MAX) * 0.15f; // Increased speed for larger bursts
+        p.vx = speed * cos(angle1) * sin(angle2);
+        p.vy = speed * sin(angle1) * sin(angle2);
+        p.vz = speed * cos(angle2);
+        p.r = 0.5f + ((float)rand() / RAND_MAX) * 0.5f; // Brighter colors
+        p.g = 0.5f + ((float)rand() / RAND_MAX) * 0.5f;
+        p.b = 0.5f + ((float)rand() / RAND_MAX) * 0.5f;
+        p.life = 2.0f + ((float)rand() / RAND_MAX) * 2.0f; // Longer life for bigger, more persistent bursts
+        particles.push_back(p);
+    }
+}
 
 
 void SetupRC() {
@@ -637,11 +738,26 @@ void SetupRC() {
     if (!LoadOBJ("OBJ/pottedPlant.obj", pottedPlant_obj)) {
         cerr << "Failed to load OBJ/pottedPlant.obj" << endl;
     }
+    if (!LoadOBJ("OBJ/playingCard.obj", playingCard_obj)) {
+        cerr << "Failed to load OBJ/playingCard.obj" << endl;
+    }
+
+    frameCamera.GetForwardVector(savedForward);
+    frameCamera.GetUpVector(savedUp);
+
+    m3dCopyVector3(firstForward, savedForward);
+    m3dCopyVector3(firstUp, savedUp);
+
+    firstPersonPitch = asin(savedForward[1]);
+    thirdPersonYaw = atan2(savedForward[0], savedForward[2]);
+    thirdPersonPitch = firstPersonPitch;
 }
 
 void ShutdownRC(void) {
     glDeleteTextures(NUM_TEXTURES, textureObjects);
 }
+
+
 
 void DrawGround(void) {
     GLfloat fExtent = 20.0f;
@@ -728,31 +844,103 @@ void DrawSun(void) {
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
     glPushMatrix();
-        glTranslatef(fLightPos[0], fLightPos[1], fLightPos[2]);
-        static GLUquadric *pSun = NULL;
-        if(pSun == NULL) {
-            pSun = gluNewQuadric();
-            gluQuadricDrawStyle(pSun, GLU_FILL);
-            gluQuadricNormals(pSun, GLU_SMOOTH);
-            gluQuadricTexture(pSun, GL_TRUE);
-        }
-        glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
-        glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-        gluSphere(pSun, 5.0f, 30, 30);
+    glTranslatef(fLightPos[0], fLightPos[1], fLightPos[2]);
+    static GLUquadric* pSun = NULL;
+    if (pSun == NULL) {
+        pSun = gluNewQuadric();
+        gluQuadricDrawStyle(pSun, GLU_FILL);
+        gluQuadricNormals(pSun, GLU_SMOOTH);
+        gluQuadricTexture(pSun, GL_TRUE);
+    }
+    glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
+    glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+    gluSphere(pSun, 5.0f, 30, 30);
     glPopMatrix();
 
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glEnable(GL_LIGHTING);
 }
 
+void DrawRobot() {
+    glBindTexture(GL_TEXTURE_2D, textureObjects[DINING_TABLE_TEXTURE]);
+
+    glPushMatrix();
+    glRotatef(torsoRot, 0, 1, 0);
+
+    // Torso
+    glPushMatrix();
+    glScalef(1.0f, 1.5f, 0.5f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // Head
+    glPushMatrix();
+    glTranslatef(0.0f, 0.75f + 0.15f, 0.0f);
+    glRotatef(headYaw * 180.0f / M_PI, 0, 1, 0);
+    glRotatef(headPitch * 180.0f / M_PI, 1, 0, 0);
+    glutSolidCube(0.4f);
+    glPopMatrix();
+
+    // Right Arm
+    glPushMatrix();
+    glTranslatef(-0.6f, 0.75f, 0);
+    glRotatef(rightArmRot, 1, 0, 0);
+    glutSolidSphere(0.15f, 12, 12);
+    glTranslatef(0, -0.1f - 0.5f, 0);
+    glPushMatrix();
+    glScalef(0.2f, 1.0f, 0.2f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+    glTranslatef(0, -0.5f - 0.08f, 0);
+    glRotatef(rightElbowRot, 1, 0, 0);
+    glutSolidSphere(0.1f, 12, 12);
+    glTranslatef(0, -0.08f - 0.5f, 0);
+    glPushMatrix();
+    glScalef(0.2f, 1.0f, 0.2f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+    glPopMatrix();
+
+    // Left Arm
+    glPushMatrix();
+    glTranslatef(0.6f, 0.75f, 0);
+    glRotatef(leftArmRot, 1, 0, 0);
+    glutSolidSphere(0.15f, 12, 12);
+    glTranslatef(0, -0.1f - 0.5f, 0);
+    glPushMatrix();
+    glScalef(0.2f, 1.0f, 0.2f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+    glTranslatef(0, -0.5f - 0.08f, 0);
+    glRotatef(leftElbowRot, 1, 0, 0);
+    glutSolidSphere(0.1f, 12, 12);
+    glTranslatef(0, -0.08f - 0.5f, 0);
+    glPushMatrix();
+    glScalef(0.2f, 1.0f, 0.2f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+    glPopMatrix();
+
+    // Legs
+    float legX[2] = { -0.3f,0.3f }, legRot[2] = { leftLegRot, rightLegRot };
+    for (int i = 0; i < 2; ++i) {
+        glPushMatrix();
+        glTranslatef(legX[i], -0.75f - 0.1f, 0);
+        glRotatef(legRot[i], 1, 0, 0);
+        glutSolidSphere(0.15f, 12, 12);
+        glTranslatef(0, -0.1f - 0.5f, 0);
+        glPushMatrix();
+        glScalef(0.3f, 1.0f, 0.3f);
+        glutSolidCube(1.0f);
+        glPopMatrix();
+        glPopMatrix();
+    }
+
+    glPopMatrix();
+}
 
 void DrawInhabitants(GLint nShadow) {
-    // <--- 修改：不再使用 static，yRot 現在是全域變數 --->
     static float orbitSpeed = 1.0f;
-
-    if (!isPaused) {
-        yRot += 0.5f;
-    }
 
     // Draw diningTable.obj
     glPushMatrix();
@@ -762,20 +950,46 @@ void DrawInhabitants(GLint nShadow) {
     DrawOBJModel(diningTable_obj, textureObjects[DINING_TABLE_TEXTURE], nShadow);
     glPopMatrix();
 
-    // Draw 5 Draw bush.obj (using bush.tga)
+    // Draw 5 Draw bush.obj
     for (int i = 0; i < 5; ++i) {
         glPushMatrix();
-        float initialZ[5] = { 0.0f, 1.0f, 2.0f, 3.0f, 4.0f };
+        float amplitude = 5.0f;
+        float frequency = 0.5f;
+        float offsetZ = 2.0f;
+        float xOffset = amplitude * cos(i * frequency);
+        float zPosition = i * 1.5f - offsetZ;
 
         glTranslatef(0.0f, -0.4f, -2.5f);
         glRotatef(yRot * orbitSpeed * 2.0f, 0.0f, 1.0f, 0.0f);
-        glTranslatef(10.0f, -0.4f, initialZ[i]);
+        glTranslatef(10.0f + xOffset, -0.4f, zPosition);
         glScalef(0.3f, 0.3f, 0.3f);
         DrawOBJModel(grass_obj_model, textureObjects[BUSH_OBJ_TEXTURE], nShadow);
         glPopMatrix();
+
+        // Draw playing cards behind the bushes
+        glPushMatrix();
+        glTranslatef(0.0f, -0.4f, -2.5f);
+        glRotatef(yRot * orbitSpeed * 2.0f, 0.0f, 1.0f, 0.0f);
+        float cardOffsetFromBushZ = -0.5f;
+        xOffset = amplitude * cos(i * frequency);
+        zPosition = i * 1.5f - offsetZ;
+
+        if (i % 2 == 0) {
+            glTranslatef(5.0f + xOffset, 1.25f, zPosition - cardOffsetFromBushZ);
+            glScalef(0.3f, 0.3f, 0.3f);
+            glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+            DrawOBJModel(playingCard_obj, textureObjects[DIAMOND_CARD_TEXTURE], nShadow);
+        }
+        else {
+            glTranslatef(5.0f + xOffset, 1.25f, zPosition - cardOffsetFromBushZ);
+            glScalef(0.3f, 0.3f, 0.3f);
+            glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+            DrawOBJModel(playingCard_obj, textureObjects[HEART_CARD_TEXTURE], nShadow);
+        }
+        glPopMatrix();
     }
 
-    // Draw pottedPlant.obj (using pottedPlant.tga)
+    // Draw pottedPlant.obj
     glPushMatrix();
     glTranslatef(0.0f, -0.2f, -2.5f);
     glRotatef(yRot, 0.0f, 1.0f, 0.0f);
@@ -783,6 +997,65 @@ void DrawInhabitants(GLint nShadow) {
     glScalef(0.02f, 0.02f, 0.02f);
     DrawOBJModel(pottedPlant_obj, textureObjects[POTTED_PLANT_TEXTURE], nShadow);
     glPopMatrix();
+
+    // Draw Robot
+    glPushMatrix();
+    if (nShadow == 1) {
+        glColor4f(0.0f, 0.0f, 0.0f, 0.6f);
+        glDisable(GL_TEXTURE_2D);
+    }
+    else {
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        glEnable(GL_TEXTURE_2D);
+    }
+    glPushMatrix();
+    glTranslatef(characterPos[0], characterPos[1], characterPos[2]);
+    glRotatef(thirdPersonYaw * 180.0f / M_PI, 0.0f, 1.0f, 0.0f);
+    DrawRobot();
+    glPopMatrix();
+
+    if (nShadow == 0 && camMode == MODE_FIRST) {
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glTranslatef(0.0f, -1.5f, -2.0f);
+        DrawRobot();
+        glPopMatrix();
+    }
+    glPopMatrix();
+}
+
+
+void UpdateParticles(float dt) {
+    for (auto& p : particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.z += p.vz;
+        p.life -= dt;
+    }
+    particles.erase(std::remove_if(particles.begin(), particles.end(),
+        [](FireworkParticle& p) { return p.life <= 0.0f; }),
+        particles.end());
+}
+
+void DrawParticles() {
+    glDisable(GL_LIGHTING);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_TEXTURE_2D);
+
+    // MODIFIED: Slightly smaller points for a finer, spark-like appearance with high density.
+    glPointSize(2.5f);
+    glBegin(GL_POINTS);
+    for (const auto& p : particles) {
+        glColor4f(p.r, p.g, p.b, p.life);
+        glVertex3f(p.x, p.y, p.z);
+    }
+    glEnd();
+
+    glDisable(GL_BLEND);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
 }
 
 void RenderScene(void) {
@@ -813,85 +1086,455 @@ void RenderScene(void) {
     glEnable(GL_DEPTH_TEST);
     DrawInhabitants(0);
 
+    DrawParticles();
+
     glPopMatrix();
     glutSwapBuffers();
 }
 
+void MouseClick(int button, int state, int x, int y) {
+    if (isFireworkMode) return;
+
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        float winX = (float)x;
+        float winY = (float)(winHeight - y);
+        float winZ;
+
+        glReadPixels(x, winHeight - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
+
+        GLdouble modelview[16], projection[16];
+        GLint viewport[4];
+
+        glGetDoublev(GL_PROJECTION_MATRIX, projection);
+        glGetIntegerv(GL_VIEWPORT, viewport);
+
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+        frameCamera.ApplyCameraTransform();
+        glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+        glPopMatrix();
+
+        GLdouble worldX, worldY, worldZ;
+        if (winZ < 1.0f) {
+            gluUnProject(winX, winY, winZ, modelview, projection, viewport,
+                &worldX, &worldY, &worldZ);
+        }
+        else {
+            GLdouble worldX_near, worldY_near, worldZ_near;
+            GLdouble worldX_far, worldY_far, worldZ_far;
+
+            gluUnProject(winX, winY, 0.0, modelview, projection, viewport,
+                &worldX_near, &worldY_near, &worldZ_near); // Near
+            gluUnProject(winX, winY, 1.0, modelview, projection, viewport,
+                &worldX_far, &worldY_far, &worldZ_far);     // Far
+
+            float dy = worldY_far - worldY_near;
+            if (fabs(dy) < 0.0001f) return;
+
+            float targetY = 5.0f;
+            float t = (targetY - worldY_near) / dy;
+
+            if (t < 0.0f || t > 2.0f) return;
+
+            worldX = worldX_near + t * (worldX_far - worldX_near);
+            worldY = targetY;
+            worldZ = worldZ_near + t * (worldZ_far - worldZ_near);
+        }
+
+        for (int i = 0; i < 100; ++i) {
+            FireworkParticle p;
+            p.x = worldX;
+            p.y = worldY;
+            p.z = worldZ;
+            float angle1 = ((float)rand() / RAND_MAX) * 2 * M_PI;
+            float angle2 = ((float)rand() / RAND_MAX) * M_PI;
+            float speed = ((float)rand() / RAND_MAX) * 0.05f;
+            p.vx = speed * cos(angle1) * sin(angle2);
+            p.vy = speed * sin(angle1) * sin(angle2);
+            p.vz = speed * cos(angle2);
+            p.r = (float)rand() / RAND_MAX;
+            p.g = (float)rand() / RAND_MAX;
+            p.b = (float)rand() / RAND_MAX;
+            p.life = 1.0f;
+            particles.push_back(p);
+        }
+    }
+}
+
+void ApplyFirstPersonRotation(float yawD, float pitchD) {
+    if (pitchD != 0.0f) {
+        float np = firstPersonPitch + pitchD;
+        np = std::max(firstPersonPitchMin, std::min(firstPersonPitchMax, np));
+        frameCamera.RotateLocalX(firstPersonPitch - np);
+        firstPersonPitch = np;
+    }
+    if (yawD != 0.0f) {
+        M3DMatrix44f rot;
+        m3dRotationMatrix44(rot, yawD, 0, 1, 0);
+        m3dTransformVector3(savedForward, savedForward, rot);
+        m3dNormalizeVector(savedForward);
+        m3dTransformVector3(savedUp, savedUp, rot);
+        m3dNormalizeVector(savedUp);
+        frameCamera.SetForwardVector(savedForward);
+        frameCamera.SetUpVector(savedUp);
+    }
+    frameCamera.GetForwardVector(savedForward);
+    frameCamera.GetUpVector(savedUp);
+    m3dCopyVector3(firstForward, savedForward);
+    m3dCopyVector3(firstUp, savedUp);
+}
+
+void ApplyThirdPersonRotation(float yawD, float pitchD) {
+    thirdPersonYaw += yawD;
+    thirdPersonPitch += pitchD;
+    thirdPersonPitch = std::max(firstPersonPitchMin,
+        std::min(firstPersonPitchMax, thirdPersonPitch));
+    savedForward[0] = sin(thirdPersonYaw) * cos(thirdPersonPitch);
+    savedForward[1] = sin(thirdPersonPitch);
+    savedForward[2] = cos(thirdPersonYaw) * cos(thirdPersonPitch);
+    m3dNormalizeVector(savedForward);
+    M3DVector3f worldUp = { 0,1,0 }, right, newUp;
+    m3dCrossProduct(right, savedForward, worldUp);
+    m3dNormalizeVector(right);
+    m3dCrossProduct(newUp, right, savedForward);
+    m3dNormalizeVector(newUp);
+    m3dCopyVector3(savedUp, newUp);
+    M3DVector3f camPos = {
+        characterPos[0] - savedForward[0] * thirdPersonDist,
+        characterPos[1] + thirdPersonHeight,
+        characterPos[2] - savedForward[2] * thirdPersonDist
+    };
+    frameCamera.SetOrigin(camPos);
+    frameCamera.SetForwardVector(savedForward);
+    frameCamera.SetUpVector(savedUp);
+    m3dCopyVector3(firstForward, savedForward);
+    m3dCopyVector3(firstUp, savedUp);
+}
+
+void ApplyFarCameraRotation(float yawD, float pitchD) {
+    M3DMatrix44f rot;
+    M3DVector3f offset, newOffset, worldUp = { 0,1,0 };
+    m3dRotationMatrix44(rot, -yawD, 0, 1, 0);
+    m3dCopyVector3(offset, freeCamPos);
+    offset[0] -= sceneCenter[0];
+    offset[1] -= sceneCenter[1];
+    offset[2] -= sceneCenter[2];
+    m3dTransformVector3(newOffset, offset, rot);
+    freeCamPos[0] = newOffset[0] + sceneCenter[0];
+    freeCamPos[1] = newOffset[1] + sceneCenter[1];
+    freeCamPos[2] = newOffset[2] + sceneCenter[2];
+    m3dRotationMatrix44(rot, pitchD, 1, 0, 0);
+    m3dCopyVector3(offset, freeCamPos);
+    offset[0] -= sceneCenter[0];
+    offset[1] -= sceneCenter[1];
+    offset[2] -= sceneCenter[2];
+    m3dTransformVector3(newOffset, offset, rot);
+    freeCamPos[0] = newOffset[0] + sceneCenter[0];
+    freeCamPos[1] = newOffset[1] + sceneCenter[1];
+    freeCamPos[2] = newOffset[2] + sceneCenter[2];
+    savedForward[0] = sceneCenter[0] - freeCamPos[0];
+    savedForward[1] = sceneCenter[1] - freeCamPos[1];
+    savedForward[2] = sceneCenter[2] - freeCamPos[2];
+    m3dNormalizeVector(savedForward);
+    m3dCopyVector3(savedUp, worldUp);
+    frameCamera.SetOrigin(freeCamPos);
+    frameCamera.SetForwardVector(savedForward);
+    frameCamera.SetUpVector(savedUp);
+}
+
+void ApplyTopCameraRotation(float yawD, float pitchD) {
+    M3DMatrix44f rot;
+    M3DVector3f offset, newOffset;
+    m3dRotationMatrix44(rot, yawD, 0, 1, 0);
+    m3dCopyVector3(offset, freeCamPos);
+    offset[0] -= sceneCenter[0];
+    offset[1] -= sceneCenter[1];
+    offset[2] -= sceneCenter[2];
+    m3dTransformVector3(newOffset, offset, rot);
+    freeCamPos[0] = newOffset[0] + sceneCenter[0];
+    freeCamPos[1] = newOffset[1] + sceneCenter[1];
+    freeCamPos[2] = newOffset[2] + sceneCenter[2];
+    M3DVector3f right;
+    m3dCrossProduct(right, savedForward, savedUp);
+    m3dNormalizeVector(right);
+    float tmp_topPitch = topPitch;
+    topPitch += pitchD;
+    topPitch = std::max(topPitchMin,
+        std::min(topPitchMax, topPitch));
+    pitchD = topPitch - tmp_topPitch;
+    m3dRotationMatrix44(rot, -pitchD, right[0], right[1], right[2]);
+    m3dCopyVector3(offset, freeCamPos);
+    offset[0] -= sceneCenter[0];
+    offset[1] -= sceneCenter[1];
+    offset[2] -= sceneCenter[2];
+    m3dTransformVector3(newOffset, offset, rot);
+    freeCamPos[0] = newOffset[0] + sceneCenter[0];
+    freeCamPos[1] = newOffset[1] + sceneCenter[1];
+    freeCamPos[2] = newOffset[2] + sceneCenter[2];
+    savedForward[0] = sceneCenter[0] - freeCamPos[0];
+    savedForward[1] = sceneCenter[1] - freeCamPos[1];
+    savedForward[2] = sceneCenter[2] - freeCamPos[2];
+    m3dNormalizeVector(savedForward);
+    M3DVector3f newUp;
+    m3dCrossProduct(newUp, right, savedForward);
+    m3dNormalizeVector(newUp);
+    m3dCopyVector3(savedUp, newUp);
+    frameCamera.SetOrigin(freeCamPos);
+    frameCamera.SetForwardVector(savedForward);
+    frameCamera.SetUpVector(savedUp);
+}
+
 void SpecialKeys(int key, int x, int y) {
-    if (key == GLUT_KEY_UP) frameCamera.MoveForward(0.1f);
-    if (key == GLUT_KEY_DOWN) frameCamera.MoveForward(-0.1f);
-    if (key == GLUT_KEY_LEFT) frameCamera.RotateLocalY(0.1f);
-    if (key == GLUT_KEY_RIGHT) frameCamera.RotateLocalY(-0.1f);
+    if (isFireworkMode) return;
+
+    float yawD = 0, pitchD = 0;
+    switch (key) {
+    case GLUT_KEY_UP:    if (camMode == MODE_FAR) return; pitchD = +pitchDelta; break;
+    case GLUT_KEY_DOWN:  if (camMode == MODE_FAR) return; pitchD = -pitchDelta; break;
+    case GLUT_KEY_LEFT:  if (camMode == MODE_TOP) return; yawD = +pitchDelta; break;
+    case GLUT_KEY_RIGHT: if (camMode == MODE_TOP) return; yawD = -pitchDelta; break;
+    }
+
+    if (camMode == MODE_FIRST) ApplyFirstPersonRotation(yawD, pitchD);
+    else if (camMode == MODE_THIRD) ApplyThirdPersonRotation(yawD, pitchD);
+    else if (camMode == MODE_FAR) ApplyFarCameraRotation(yawD, pitchD);
+    else if (camMode == MODE_TOP) ApplyTopCameraRotation(yawD, pitchD);
+
+
     glutPostRedisplay();
 }
 
-// <--- 修改：擴充 Keyboard 函式以處理 w, s, r 鍵 --->
-void Keyboard(unsigned char key, int x, int y) {
-    switch (key) {
-        case 's':
-        case 'S':
-            frameCamera.RotateLocalX(0.05f); // 向上看
-            break;
-        case 'w':
-        case 'W':
-            frameCamera.RotateLocalX(-0.05f); // 向下看
-            break;
-        case ' ':
-            isPaused = !isPaused;
-            break;
-        case '1': // 東昇 (Sunrise)
-            fLightPos[0] = 100.0f;
-            fLightPos[1] = 25.0f;
-            fLightPos[2] = 0.0f;
-            m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
-            break;
-        case '2': // 日正當中 (Noon)
-            fLightPos[0] = 0.0f;
-            fLightPos[1] = 100.0f;
-            fLightPos[2] = 0.0f;
-            m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
-            break;
-        case '3': // 西斜 (Sunset)
-            fLightPos[0] = -100.0f;
-            fLightPos[1] = 25.0f;
-            fLightPos[2] = 0.0f;
-            m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
-            break;
-        case 'r':
-        case 'R':
-            // 重置攝影機
-            frameCamera.SetOrigin(0.0f, 0.0f, 15.0f);
-            frameCamera.SetForwardVector(0.0f, 0.0f, -1.0f);
-            frameCamera.SetUpVector(0.0f, 1.0f, 0.0f);
+void movefunction(unsigned char key)
+{
+    const float step = 0.3f;
+    const float swing = walkSwing;
 
-            // 重置光源到正午
-            fLightPos[0] = 0.0f;
-            fLightPos[1] = 100.0f;
-            fLightPos[2] = 0.0f;
-            m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
-
-            // 重置動畫
-            yRot = 0.0f;
-            isPaused = false;
-            break;
+    if (camMode == MODE_TOP) {
+        float fy = topYaw;
+        M3DVector3f fwTop = { sinf(fy), 0.0f, cosf(fy) };
+        M3DVector3f worldUp = { 0,1,0 }, rightTop;
+        m3dCrossProduct(rightTop, fwTop, worldUp);
+        m3dNormalizeVector(fwTop);
+        m3dNormalizeVector(rightTop);
+        if (key == 'w' || key == 'W') { characterPos[0] -= fwTop[0] * step; characterPos[2] -= fwTop[2] * step; rightArmRot = -swing;  leftArmRot = swing; rightLegRot = swing;   leftLegRot = -swing; }
+        else if (key == 's' || key == 'S') { characterPos[0] += fwTop[0] * step; characterPos[2] += fwTop[2] * step; rightArmRot = swing;   leftArmRot = -swing; rightLegRot = -swing;  leftLegRot = swing; }
+        else if (key == 'a' || key == 'A') { characterPos[0] += rightTop[0] * step; characterPos[2] += rightTop[2] * step; rightArmRot = swing;   leftArmRot = -swing; rightLegRot = -swing;  leftLegRot = swing; }
+        else if (key == 'd' || key == 'D') { characterPos[0] -= rightTop[0] * step; characterPos[2] -= rightTop[2] * step; rightArmRot = -swing;  leftArmRot = swing; rightLegRot = swing;   leftLegRot = -swing; }
+        glutPostRedisplay();
+        return;
     }
-    // 確保鍵盤輸入後立即重繪
+    else if (camMode == MODE_FAR) {
+        M3DVector3f fwFar = { sinf(farYaw), 0.0f, cosf(farYaw) };
+        M3DVector3f worldUp = { 0,1,0 }, rightFar;
+        m3dCrossProduct(rightFar, fwFar, worldUp);
+        m3dNormalizeVector(fwFar);
+        m3dNormalizeVector(rightFar);
+        if (key == 'w' || key == 'W') { characterPos[0] += fwFar[0] * step; characterPos[2] += fwFar[2] * step; rightArmRot = -swing; leftArmRot = swing; rightLegRot = swing; leftLegRot = -swing; }
+        else if (key == 's' || key == 'S') { characterPos[0] -= fwFar[0] * step; characterPos[2] -= fwFar[2] * step; rightArmRot = swing; leftArmRot = -swing; rightLegRot = -swing; leftLegRot = swing; }
+        else if (key == 'a' || key == 'A') { characterPos[0] -= rightFar[0] * step; characterPos[2] -= rightFar[2] * step; rightArmRot = swing; leftArmRot = -swing; rightLegRot = -swing; leftLegRot = swing; }
+        else if (key == 'd' || key == 'D') { characterPos[0] += rightFar[0] * step; characterPos[2] += rightFar[2] * step; rightArmRot = -swing; leftArmRot = swing; rightLegRot = swing; leftLegRot = -swing; }
+        return;
+    }
+
+    M3DVector3f fw, xa;
+    if (camMode == MODE_FIRST) { frameCamera.GetForwardVector(fw); frameCamera.GetXAxis(xa); }
+    else { m3dCopyVector3(fw, savedForward); m3dCrossProduct(xa, savedUp, fw); }
+    fw[1] = 0; xa[1] = 0;
+    m3dNormalizeVector(fw);
+    m3dNormalizeVector(xa);
+
+    if (key == 'w' || key == 'W') { characterPos[0] += fw[0] * step; characterPos[2] += fw[2] * step; rightArmRot = -swing;  leftArmRot = swing; rightLegRot = swing;   leftLegRot = -swing; }
+    else if (key == 's' || key == 'S') { characterPos[0] -= fw[0] * step; characterPos[2] -= fw[2] * step; rightArmRot = swing;   leftArmRot = -swing; rightLegRot = -swing;  leftLegRot = swing; }
+    else if (key == 'a' || key == 'A') { characterPos[0] += xa[0] * step; characterPos[2] += xa[2] * step; rightArmRot = swing;   leftArmRot = -swing; rightLegRot = -swing;  leftLegRot = swing; }
+    else if (key == 'd' || key == 'D') { characterPos[0] -= xa[0] * step; characterPos[2] -= xa[2] * step; rightArmRot = -swing;  leftArmRot = swing; rightLegRot = swing;   leftLegRot = -swing; }
+
+    if (camMode == MODE_FIRST) {
+        frameCamera.SetOrigin(characterPos);
+    }
+    else if (camMode == MODE_THIRD) {
+        M3DVector3f camPos = {
+            characterPos[0] - savedForward[0] * thirdPersonDist,
+            characterPos[1] + thirdPersonHeight,
+            characterPos[2] - savedForward[2] * thirdPersonDist
+        };
+        frameCamera.SetOrigin(camPos);
+    }
     glutPostRedisplay();
+}
+
+void ResetScene(void) {
+    isFireworkMode = false;
+    particles.clear();
+
+    characterPos[0] = 0.0f;
+    characterPos[1] = 1.5f;
+    characterPos[2] = 15.0f;
+
+    camMode = MODE_FIRST;
+    isFirstPerson = true;
+
+    firstPersonPitch = 0.0f;
+    thirdPersonYaw = M_PI;
+    thirdPersonPitch = 0.0f;
+
+    frameCamera.SetOrigin(characterPos);
+    frameCamera.SetForwardVector(0, 0, -1);
+    frameCamera.SetUpVector(0, 1, 0);
+
+    frameCamera.GetForwardVector(savedForward);
+    frameCamera.GetUpVector(savedUp);
+    m3dCopyVector3(firstForward, savedForward);
+    m3dCopyVector3(firstUp, savedUp);
+
+    UpdateCameraView();
+}
+
+void Keyboard(unsigned char key, int x, int y) {
+    if (isFireworkMode) {
+        if (key == 'r' || key == 'R') {
+            ResetScene();
+        }
+        return;
+    }
+
+    switch (key) {
+    case 'p': case 'P': isPaused = !isPaused; break;
+    case '1': fLightPos[0] = 100; fLightPos[1] = 25;  fLightPos[2] = 0;
+        m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
+        break;
+    case '2': fLightPos[0] = 0;   fLightPos[1] = 100; fLightPos[2] = 0;
+        m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
+        break;
+    case '3': fLightPos[0] = -100; fLightPos[1] = 25;  fLightPos[2] = 0;
+        m3dMakePlanarShadowMatrix(mShadowMatrix, g_pPlane, fLightPos);
+        break;
+
+    case '4':
+        isFireworkMode = true;
+        fireworkTimer = 5.0f;
+        camMode = MODE_FAR;
+        farYaw = thirdPersonYaw;
+        farPitch = farPitchANGLE;
+        UpdateCameraView();
+        break;
+
+    case 'w': case 'W':
+    case 'a': case 'A':
+    case 's': case 'S':
+    case 'd': case 'D':
+        moving = true;
+        swingReverse = !swingReverse;
+        movefunction(key);
+        break;
+
+    case 'c':
+        camMode = MODE_FAR;
+        farYaw = thirdPersonYaw;
+        farPitch = farPitchANGLE;
+        UpdateCameraView();
+        break;
+
+    case 'v':
+        camMode = MODE_TOP;
+        topYaw = 0;
+        topPitch = -M_PI / 2;
+        UpdateCameraView();
+        break;
+
+    case 'q': case 'Q':
+        if (camMode == MODE_FAR || camMode == MODE_TOP) {
+            camMode = isFirstPerson ? MODE_FIRST : MODE_THIRD;
+        }
+        else {
+            isFirstPerson = !isFirstPerson;
+            camMode = isFirstPerson ? MODE_FIRST : MODE_THIRD;
+        }
+        if (camMode == MODE_FIRST) {
+            frameCamera.SetOrigin(characterPos);
+            frameCamera.SetForwardVector(firstForward);
+            frameCamera.SetUpVector(firstUp);
+            frameCamera.GetForwardVector(savedForward);
+            frameCamera.GetUpVector(savedUp);
+            firstPersonPitch = asin(savedForward[1]);
+        }
+        else {
+            frameCamera.GetForwardVector(savedForward);
+            thirdPersonPitch = asin(savedForward[1]);
+            thirdPersonYaw = atan2(savedForward[0], savedForward[2]);
+        }
+        UpdateCameraView();
+        break;
+
+    case 'r':
+    case 'R':
+        ResetScene();
+        break;
+
+    default:
+        return;
+    }
+    glutPostRedisplay();
+}
+
+void KeyboardUp(unsigned char key, int x, int y) {
+    if (key == 'w' || key == 'a' || key == 's' || key == 'd') {
+        moving = false;
+    }
 }
 
 void TimerFunction(int value) {
+    float dt = 0.033f;
+    UpdateParticles(dt);
+
+    if (isFireworkMode) {
+        fireworkTimer -= dt;
+
+        // MODIFIED: Launch a new firework every single frame to create a "sky-full" effect.
+        // The old timer logic is removed.
+        LaunchAutomaticFirework();
+
+        if (fireworkTimer <= 0.0f) {
+            ResetScene();
+        }
+    }
+
+    // This animation block now runs ALL THE TIME, even during fireworks.
+    if (!isPaused) {
+        // MODIFIED: Restored faster rotation speed for orbiting objects.
+        yRot += 2.0f;
+    }
+
+    if (animationEnabled) {
+        animTime += dt;
+        torsoRot = 5.0f * sinf(animTime * 0.5f);
+    }
+
+    // Only animate walking if the key is actually held down and not in firework mode
+    if (moving && !isFireworkMode) {
+        armSwingAngle += swingSpeed;
+        float phase = armSwingAngle * 0.1f;
+        if (swingReverse) phase += M_PI;
+        rightArmRot = swingStep * sinf(phase);
+        leftArmRot = -swingStep * sinf(phase);
+        rightLegRot = -swingStep * sinf(phase);
+        leftLegRot = swingStep * sinf(phase);
+    }
+
     glutPostRedisplay();
-    glutTimerFunc(16, TimerFunction, 1);
+    glutTimerFunc(33, TimerFunction, 1);
 }
 
 void ChangeSize(int w, int h) {
+    winHeight = h;
+    winWidth = w;
     GLfloat fAspect;
     if (h == 0) h = 1;
     glViewport(0, 0, w, h);
     fAspect = (GLfloat)w / (GLfloat)h;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(35.0f, fAspect, 1.0f, 250.0f); // 增加遠裁剪面距離以看到遠方的太陽
+    gluPerspective(35.0f, fAspect, 1.0f, 250.0f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
@@ -899,16 +1542,19 @@ void ChangeSize(int w, int h) {
 int main(int argc, char* argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_STENCIL);
-    glutInitWindowSize(800, 600);
-    // <--- 修改：更新視窗標題以反映新控制 --->
-    glutCreateWindow("Final Project - Controls: Arrows, W/S, 1/2/3, R=Reset");
+    glutInitWindowSize(winWidth, winHeight);
+    glutCreateWindow("Final Project - Controls: Arrows/WASD, 1-3=Light, 4=Fireworks, Q/C/V=View, R=Reset");
 
     glutReshapeFunc(ChangeSize);
     glutDisplayFunc(RenderScene);
     glutSpecialFunc(SpecialKeys);
     glutKeyboardFunc(Keyboard);
+    glutKeyboardUpFunc(KeyboardUp);
+    glutMouseFunc(MouseClick);
 
-    frameCamera.SetOrigin(0.0f, 0.0f, 15.0f);
+    frameCamera.SetOrigin(characterPos);
+    frameCamera.SetForwardVector(0.0f, 0.0f, -1.0f);
+    frameCamera.SetUpVector(0.0f, 1.0f, 0.0f);
 
     SetupRC();
     glutTimerFunc(33, TimerFunction, 1);
