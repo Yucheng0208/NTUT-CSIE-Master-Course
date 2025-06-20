@@ -37,8 +37,6 @@
 #define GL_CLAMP_TO_EDGE 0x812F
 #define M_PI 3.1415926
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 // BEGIN math3d.h
 ///////////////////////////////////////////////////////////////////////////////
@@ -601,11 +599,12 @@ void UpdateCameraView() {
 #define SUN_TEXTURE          4
 #define DIAMOND_CARD_TEXTURE 5
 #define HEART_CARD_TEXTURE   6
-#define NUM_TEXTURES         7
+#define BackGround_Night     7
+#define NUM_TEXTURES         8
 
 GLuint  textureObjects[NUM_TEXTURES];
 
-const char* szTextureFiles[] = { "TGA/blackandwhiteTiles.tga", "TGA/wood.tga", "TGA/bush.tga", "TGA/pottedPlant.tga", "TGA/sun.tga",  "TGA/diamond.tga", "TGA/heart.tga" };
+const char* szTextureFiles[] = { "TGA/blackandwhiteTiles.tga", "TGA/wood.tga", "TGA/bush.tga", "TGA/pottedPlant.tga", "TGA/sun.tga",  "TGA/diamond.tga", "TGA/heart.tga", "TGA/night.tga" };
 
 bool isPaused = false;
 GLfloat yRot = 0.0f;
@@ -629,6 +628,13 @@ struct FireworkParticle {
 };
 
 vector<FireworkParticle> particles;
+
+// Card Show
+bool cardShow = false;
+float cardYawStart = 0.0f;
+float cardRotTime = 0.0f;
+const float cardRotDur = 4.0f;
+const float cardRotSpeed = 2.0f * M_PI / cardRotDur;
 
 // Windows Size
 int winWidth = 800, winHeight = 600;
@@ -953,37 +959,57 @@ void DrawInhabitants(GLint nShadow) {
     // Draw 5 Draw bush.obj
     for (int i = 0; i < 5; ++i) {
         glPushMatrix();
+
         float amplitude = 5.0f;
         float frequency = 0.5f;
         float offsetZ = 2.0f;
         float xOffset = amplitude * cos(i * frequency);
         float zPosition = i * 1.5f - offsetZ;
+        if (cardShow) {
+            glTranslatef(characterPos[0], characterPos[1] + 0.6f, characterPos[2]);
+            glRotatef(farYaw * 180.0f / M_PI, 0, 1, 0);
+            glTranslatef(10.0f + xOffset, -0.4f, zPosition);
+            glScalef(0.3f, 0.3f, 0.3f);
+        }
+        else {
+            glTranslatef(0.0f, -0.4f, -2.5f);
+            glRotatef(yRot * orbitSpeed * 2.0f, 0.0f, 1.0f, 0.0f);
+            glTranslatef(10.0f + xOffset, -0.4f, zPosition);
+            glScalef(0.3f, 0.3f, 0.3f);
+            DrawOBJModel(grass_obj_model, textureObjects[BUSH_OBJ_TEXTURE], nShadow);
+        }
 
-        glTranslatef(0.0f, -0.4f, -2.5f);
-        glRotatef(yRot * orbitSpeed * 2.0f, 0.0f, 1.0f, 0.0f);
-        glTranslatef(10.0f + xOffset, -0.4f, zPosition);
-        glScalef(0.3f, 0.3f, 0.3f);
-        DrawOBJModel(grass_obj_model, textureObjects[BUSH_OBJ_TEXTURE], nShadow);
+        //DrawOBJModel(grass_obj_model, textureObjects[BUSH_OBJ_TEXTURE], nShadow);
         glPopMatrix();
 
         // Draw playing cards behind the bushes
         glPushMatrix();
-        glTranslatef(0.0f, -0.4f, -2.5f);
-        glRotatef(yRot * orbitSpeed * 2.0f, 0.0f, 1.0f, 0.0f);
+
         float cardOffsetFromBushZ = -0.5f;
         xOffset = amplitude * cos(i * frequency);
         zPosition = i * 1.5f - offsetZ;
 
-        if (i % 2 == 0) {
+        float spacing = 2.5f;
+        float y_height = 1.25f;
+        float z_bihind = 1.5f;
+
+        if (cardShow) {
+            glTranslatef(characterPos[0], characterPos[1] + 0.6f, characterPos[2]);
+            glRotatef(farYaw * 180.0f / M_PI, 0, 1, 0);
+            glTranslatef((i - 2) * spacing, y_height, abs((i - 2)) * z_bihind - 2.5f);
+            glScalef(0.3f, 0.3f, 0.3f);
+        }
+        else {
+            glTranslatef(0.0f, -0.4f, -2.5f);
+            glRotatef(yRot * orbitSpeed * 2.0f, 0.0f, 1.0f, 0.0f);
             glTranslatef(5.0f + xOffset, 1.25f, zPosition - cardOffsetFromBushZ);
             glScalef(0.3f, 0.3f, 0.3f);
             glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+        }
+        if (i % 2 == 0) {
             DrawOBJModel(playingCard_obj, textureObjects[DIAMOND_CARD_TEXTURE], nShadow);
         }
         else {
-            glTranslatef(5.0f + xOffset, 1.25f, zPosition - cardOffsetFromBushZ);
-            glScalef(0.3f, 0.3f, 0.3f);
-            glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
             DrawOBJModel(playingCard_obj, textureObjects[HEART_CARD_TEXTURE], nShadow);
         }
         glPopMatrix();
@@ -1058,8 +1084,49 @@ void DrawParticles() {
     glEnable(GL_TEXTURE_2D);
 }
 
+void DrawBackGround() {
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_BLEND);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);  // 避免顏色殘留
+
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE); // 不受光照或顏色影響
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0, winWidth, 0, winHeight, -1, 1);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureObjects[BackGround_Night]);
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(0, 0);
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(winWidth, 0);
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(winWidth, winHeight);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(0, winHeight);
+    glEnd();
+
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE); // 還原
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_CULL_FACE);
+}
+
 void RenderScene(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    DrawBackGround();
 
     glPushMatrix();
     frameCamera.ApplyCameraTransform();
@@ -1418,6 +1485,17 @@ void Keyboard(unsigned char key, int x, int y) {
         farPitch = farPitchANGLE;
         UpdateCameraView();
         break;
+    case '5':
+        if (cardShow) break;
+        camMode = MODE_FAR;
+        farYaw = thirdPersonYaw;
+        farPitch = farPitchANGLE;
+        UpdateCameraView();
+
+        cardShow = true;
+        cardYawStart = farYaw;
+        cardRotTime = 0.0f;
+        break;
 
     case 'w': case 'W':
     case 'a': case 'A':
@@ -1486,6 +1564,19 @@ void KeyboardUp(unsigned char key, int x, int y) {
 void TimerFunction(int value) {
     float dt = 0.033f;
     UpdateParticles(dt);
+
+    if (cardShow) {
+        cardRotTime += dt;
+        // 持續繞圈
+        farYaw = cardYawStart + cardRotSpeed * cardRotTime;
+        UpdateCameraView();
+
+        // 到時間：收工
+        if (cardRotTime >= cardRotDur) {
+            cardShow = false;
+            ResetScene();
+        }
+    }
 
     if (isFireworkMode) {
         fireworkTimer -= dt;
