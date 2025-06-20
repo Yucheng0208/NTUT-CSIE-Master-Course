@@ -1,7 +1,7 @@
-# --- START OF FILE CMakeLists.txt ---
+# --- START OF FILE CMakeLists.txt (Corrected) ---
 
 cmake_minimum_required(VERSION 3.10)
-project(CG_Lab14)
+project(CG_FinalProject)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -9,7 +9,6 @@ set(CMAKE_CXX_STANDARD 14)
 # 將所有需要複製的資源檔案路徑集中管理
 
 # TGA 紋理檔案列表 (路徑相對於專案根目錄)
-# 注意：已修正你原本的 "../TGA/wood.tga" 路徑，因為 TGA 資料夾與 CMakeLists.txt 同層級
 set(TEXTURES
         TGA/bush.tga
         TGA/blackandwhiteTiles.tga
@@ -30,7 +29,7 @@ set(MODELS
 
 # --- 2. 建立執行檔 ---
 # 這個指令在所有平台上都一樣，可以移到 if/else 區塊外面
-add_executable(CG_Lab14 FinalProject_group8.cpp)
+add_executable(CG_FinalProject FinalProject.cpp)
 
 # --- 3. 平台相關的設定 (函式庫、標頭檔路徑) ---
 if (APPLE)
@@ -42,7 +41,7 @@ if (APPLE)
     add_definitions(-DGL_SILENCE_DEPRECATION)
 
     # 連結 macOS 專用的 Frameworks
-    target_link_libraries(CG_Lab14
+    target_link_libraries(CG_FinalProject
             "-framework OpenGL"
             "-framework GLUT"
             "-framework Cocoa"
@@ -56,7 +55,7 @@ elseif (WIN32)
     link_directories(${PROJECT_SOURCE_DIR}/lib)
 
     # 連結 Windows 專用的函式庫
-    target_link_libraries(CG_Lab14
+    target_link_libraries(CG_FinalProject
             freeglut
             opengl32
             glu32
@@ -78,18 +77,18 @@ foreach(res_file ${RESOURCE_FILES})
     get_filename_component(res_filename ${res_file} NAME)
 
     # 添加一個自訂命令 (Custom Command)
-    # TARGET CG_Lab14 POST_BUILD: 表示在 "CG_Lab14" 這個目標建置完成後執行
-    add_custom_command(TARGET CG_Lab14 POST_BUILD
+    # TARGET CG_FinalProject POST_BUILD: 表示在 "CG_FinalProject" 這個目標建置完成後執行
+    add_custom_command(TARGET CG_FinalProject POST_BUILD
             # COMMAND: 要執行的命令
             # ${CMAKE_COMMAND} -E copy_if_different: CMake 內建的跨平台複製指令，只有在來源檔案較新時才會複製
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             # 來源檔案路徑 (專案根目錄下的相對路徑)
             "${CMAKE_SOURCE_DIR}/${res_file}"
             # 目標檔案路徑 ($<TARGET_FILE_DIR:...> 會自動解析為執行檔所在的目錄)
-            "$<TARGET_FILE_DIR:CG_Lab14>/${res_filename}"
+            "$<TARGET_FILE_DIR:CG_FinalProject>/${res_filename}"
             # COMMENT: 在建置時顯示的提示訊息
             COMMENT "正在複製資源 檔案: ${res_filename}"
     )
 endforeach()
 
-# --- END OF FILE CMakeLists.txt ---
+# --- END OF FILE CMakeLists.txt (Corrected) ---
