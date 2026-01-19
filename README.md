@@ -32,7 +32,7 @@ The repository includes resources for the following courses:
 ## Getting Started
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/NTUT-CSIE-Master-Course.git
+    git clone https://github.com/Yucheng0208/NTUT-CSIE-Master-Course.git
     ```
 2. Navigate to the desired course folder to access materials.
 
